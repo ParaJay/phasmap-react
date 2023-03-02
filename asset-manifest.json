@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/phasmap-react/static/css/main.48665cd9.css",
+    "main.css": "/phasmap-react/static/css/main.0850eb89.css",
     "main.js": "/phasmap-react/static/js/main.56d924b9.js",
     "static/js/787.bc7d429a.chunk.js": "/phasmap-react/static/js/787.bc7d429a.chunk.js",
     "static/media/sunny_meadows_restricted.png": "/phasmap-react/static/media/sunny_meadows_restricted.efb10ab0be28ae0c8398.png",
@@ -76,12 +76,12 @@
     "static/media/lighter.txt": "/phasmap-react/static/media/lighter.ace3f5f905f489c2a2d5.txt",
     "static/media/salt.txt": "/phasmap-react/static/media/salt.f89d962985d2c5e33607.txt",
     "static/media/tripod.txt": "/phasmap-react/static/media/tripod.2811a40d78de8893474f.txt",
-    "main.48665cd9.css.map": "/phasmap-react/static/css/main.48665cd9.css.map",
+    "main.0850eb89.css.map": "/phasmap-react/static/css/main.0850eb89.css.map",
     "main.56d924b9.js.map": "/phasmap-react/static/js/main.56d924b9.js.map",
     "787.bc7d429a.chunk.js.map": "/phasmap-react/static/js/787.bc7d429a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.48665cd9.css",
+    "static/css/main.0850eb89.css",
     "static/js/main.56d924b9.js"
   ]
 }
