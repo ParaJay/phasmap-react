@@ -1,0 +1,19 @@
+Evidence: Ghost Orbs, Fingerprints, D.O.T.S
+
+Hunts from: 50% target sanity (87% avg)
+
+Focuses on the same player until that player is killed or has left the game
+
+Using a paramic has a 33% chance of causing Banshee shriek or wailing
+
+A Banshee will prefer to cause ghost events where it sings over other types of ghost events.
+
+If all of the following conditions are met:
+    The ghost event is a singing event,
+    The ghost event is targeted towards the hunt target, and
+    The hunt target causes the Banshee to disappear prematurely (by going near it);
+Then the hunt target's sanity will decrease by 15%, instead of the usual 10%
+
+Banshees only check target's sanity for initiating a hunt
+
+Ability: when roaming, if target is inside the map, has 66% to roam in target's direction (more frequent than Phantom's ability)

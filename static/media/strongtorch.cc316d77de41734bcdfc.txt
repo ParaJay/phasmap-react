@@ -1,0 +1,5 @@
+Cost: $50
+
+Max Amount: 4
+
+Required Level: 3

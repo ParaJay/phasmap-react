@@ -1,0 +1,20 @@
+Grants a wish for those who ask it.
+
+Wishes can be found scattered inside Sunny Meadows and will be added to your Journal when found.
+These are not required to use the paw but are just a permanent note to help you remember.
+
+Number of wishes corresponds to the difficulty or reward multiplier
+    0x - 1.9x Rewards: 5 Wishes
+    2x - 2.9x Rewards: 4 Wishes
+    3x or higher Rewards: 3 Wishes
+
+Wishes:
+    I wish to be sane
+    I wish to be safe
+    I wish to leave
+    I wish to see the ghost
+    I wish for activity
+    I wish to trap the ghost
+    I wish to revive my friend
+    I wish for knowledge
+    I wish for {weather}

@@ -1,0 +1,5 @@
+Cost: $35
+
+Max Amount: 2
+
+Is Starter: Yes
