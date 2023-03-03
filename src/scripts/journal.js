@@ -14,7 +14,7 @@ const ghosts = [
 ];
 
 const permanentEvidence = {};
-const actions = [goto, strike, reset];
+const actions = {"goto":goto, "strike":strike, "reset":reset};
 const actionButtons = [];
 
 const checkVals = {
@@ -134,9 +134,7 @@ function difficultyCheck(third, max, off) {
                     if(permanentEvidence[ghost]){
                         let ps = selections[reverseCheck(permanentEvidence[ghost])];
 
-                        if(!ps) {
-                            rem.push(ghost);
-                        }
+                        if(!ps) rem.push(ghost);
                     }
                 }
             }
@@ -305,7 +303,7 @@ class ActionButton extends React.Component {
     render() {
         let action = this.props.action;
 
-        return(<><br/><button id={action.name} onClick={action}>{capitalize(action.name)}</button></>)
+        return(<><br/><button id={action} onClick={actions[action]}>{capitalize(action)}</button></>)
     }
 }
 
@@ -498,4 +496,6 @@ function initInfo(callback) {
 
 export default Journal;
 
-for(let i = 0; i < actions.length; i++) actionButtons.push(<ActionButton key={"act" + i} action={actions[i]}/>)
+let actionKeys = Object.keys(actions);
+
+for(let i = 0; i < actionKeys.length; i++) actionButtons.push(<ActionButton key={"act" + i} action={actionKeys[i]}/>)
