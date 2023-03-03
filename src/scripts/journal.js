@@ -1,5 +1,5 @@
 import React from "react";
-import { readInfo, stripURL } from "./utils.js";
+import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys } from "./utils.js";
 
 const checks = [];
 
@@ -11,17 +11,34 @@ const ghosts = [
     "Banshee", "Demon", "Deogen", "Goryo", "Hantu", "Jinn", "Mare", "Moroi", "Myling",
     "Obake", "Oni", "Onryo", "Phantom", "Poltergeist", "Raiju", "Revenant", "Shade",
     "Spirit", "Thaye", "The Mimic", "The Twins", "Wraith", "Yokai", "Yurei"
-]
+];
 
+const permanentEvidence = {};
+
+const checkVals = {
+    orbs: "Ghost Orbs",
+    fingerprints: "Fingerprints",
+    dots: "D.O.T.S",
+    freezing: "Freezing",
+    spiritBox: "Spirit Box",
+    emf: "EMF 5",
+    writing: "Ghost Writing"
+};
+
+var possible;
 var updateCallback;
 var evidenceCallback;
+var exclusionCallback;
 var labelCallback;
 var sani = 0;
 const selections = {}
 const exclusions = {};
+const autoExcluded = [];
 const evidence = {}
 const striked = {};
 const sanity = {};
+var nightmare;
+var insanity;
 var selected;
 
 var shifting = false;
@@ -89,7 +106,85 @@ function getPossibleGhosts() {
         if(sanity[ghost] >= sani) third.push(ghost);
     });
 
+    if(nightmare) third = difficultyCheck(third, 2, 1);
+    
+    if(insanity) third = difficultyCheck(third, 1, 2);
+
+    if(third.length == 0) third.push("None");
+
     return third;
+}
+
+function difficultyCheck(third, max, off) {
+    let count = countSelections();
+
+    let rem = [];
+
+    if(count > max && !third.includes("The Mimic")) {
+        third = [];
+    } else {
+        for(let i = 0; i < third.length; i++) {
+            let ghost = third[i];
+
+            if(ghost !== "The Mimic" && count > max) {
+                rem.push(ghost);
+            } else {
+                let size = evidence[ghost].length;
+
+                if(count == size - off) {                       
+                    if(permanentEvidence[ghost]){
+                        let ps = selections[reverseCheck(permanentEvidence[ghost])];
+
+                        if(!ps) {
+                            rem.push(ghost);
+                        }
+                    }
+                } else if(count > size - off) {
+                    if(permanentEvidence[ghost]){
+                        let ps = selections[reverseCheck(permanentEvidence[ghost])];
+
+                        if(!ps) {
+                            rem.push(ghost);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for(let i = 0; i < rem.length; i++) {
+        third.splice(third.indexOf(rem[i]), 1);
+    }
+
+    return third;
+}
+
+function reverseCheck(checkFor) {
+    let keys = Object.keys(checkVals);
+
+    for(let i = 0; i < keys.length; i++) {
+        let value = checkVals[keys[i]];
+
+        if(value == checkFor) {
+            return keys[i];
+        }
+    }
+
+    return null;
+}
+
+function countSelections() {
+    let count = 0;
+
+    let keys = Object.keys(selections);
+
+    for(let i = 0; i < keys.length; i++) {
+        let selection = selections[keys[i]];
+
+        if(selection) count++;
+    }
+
+    return count;
 }
 
 function goto() {
@@ -104,6 +199,8 @@ function strike() {
     if(!selected) return;
 
     striked[selected] = !striked[selected];
+
+    updateExclusions();
 
     updateCallback();
 }
@@ -126,9 +223,15 @@ class CheckBox extends React.Component {
     }
 
     componentDidMount() {
-        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onChange={(e) => { 
+        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { 
             evidenceCallback(e);
-        }}/>);
+        }}
+        onMouseUp={(e) => {
+            if(e.button == 1) {
+                exclusionCallback(this.props.id);
+            }
+        }}
+        />);
 
         if(!checks.includes(this.check.id))
             checks.push(this.check.id);
@@ -156,7 +259,11 @@ class CheckBoxLabel extends React.Component {
         let text = this.props.text;
         if(exclusions[f]) text += " (NOT)";
 
-        return <label className="journal-check-label" htmlFor={f}>{text}</label>;
+        return <label className="journal-check-label" htmlFor={f} onMouseUp={(e) => {
+            if(e.button == 1 && checkVals[f]) {
+                exclusionCallback(f);
+            }
+        }}>{text}</label>;
     }
 }
 
@@ -173,9 +280,97 @@ function l(t, k=t) {
     return <Label key={k} text={t}></Label>;
 }
 
+//TODO: nightmare/insanity
+function updateExclusions() {
+    // console.log("updating exclusions");
+
+    let keys = Object.keys(checkVals);
+    let selected = [];
+
+    for(let i = 0; i < keys.length; i++) {
+        if(selections[keys[i]]) {
+            selected.push(keys[i]);
+        }
+    }
+
+    possible = getPossibleGhosts();
+
+    for(let i = 0; i < keys.length; i++) {
+        if(!isPossible(keys[i], selected)) {
+            // console.log("not: " + keys[i]);
+            exclusions[keys[i]] = true;
+            autoExcluded.push(keys[i]);
+            // selections[keys[i]] = false;
+        } else {
+            if(autoExcluded.includes(keys[i])) {
+                exclusions[keys[i]] = false;
+                autoExcluded.splice(autoExcluded.indexOf(keys[i]), 1);
+            }
+        }
+    }
+
+    updateCallback();
+}
+
+function isPossible(evi) {
+    let found = [];
+    let ghosts = possible.slice();
+
+    if(ghosts.length == 0 || ghosts[0] == "None") return true;
+    let count = countSelections();
+
+    // if(count == 2 && nightmare && !selections[evi]) return false;
+    // if(count == 1 && insanity && !selections[evi]) return false;
+
+    for(let i = 0; i < ghosts.length; i++) {
+        if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(checkVals[evi])) {
+            found.push(ghosts[i]);
+        }
+
+        if(found.includes(ghosts[i]) && striked[ghosts[i]]) {
+            found.splice(found.indexOf(ghosts[i]), 1);
+        }
+
+        if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - 1 && nightmare) {
+            found.splice(found.indexOf(ghosts[i]), 1);
+        }
+
+        if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - 2 && insanity) {
+            found.splice(found.indexOf(ghosts[i]), 1);
+        }
+
+        if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 1 && nightmare) {
+            if(permanentEvidence[ghosts[i]]) {
+                if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) {
+                    found.splice(found.indexOf(ghosts[i]), 1);
+                }
+            } else {
+                found.splice(found.indexOf(ghosts[i]), 1);
+            }
+        }
+
+        if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 2 && insanity) {
+            if(permanentEvidence[ghosts[i]]) {
+                if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) {
+                    found.splice(found.indexOf(ghosts[i]), 1);
+                }
+            } else {
+                found.splice(found.indexOf(ghosts[i]), 1);
+            }
+        }
+
+        // if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 2 && insanity) {
+        //     found.splice(found.indexOf(ghosts[i]), 1);
+        // }
+    }
+
+    return found.length > 0;
+}
+
 class Journal extends React.Component {
     render() {
         if(!evidenceCallback) evidenceCallback = this.onEvidenceChange.bind(this);
+        if(!exclusionCallback) exclusionCallback = this.onExclusionSwitch.bind(this);
 
         let ghosts = getPossibleGhosts();
 
@@ -208,16 +403,6 @@ class Journal extends React.Component {
                 center.push(l(g));
             }
         }
-
-        let checkVals = {
-            orbs: "Ghost Orbs",
-            fingerprints: "",
-            dots: "D.O.T.S",
-            freezing: "",
-            spiritBox: "Spirit Box",
-            emf: "EMF 5",
-            writing: "Ghost Writing"
-        };
         
         this.checks = [];
         this.labels = [];
@@ -247,16 +432,23 @@ class Journal extends React.Component {
 
                 <div className="btns-left">
                     {this.checks}
-                    <br/><br/><br/>
+                    <br/><br/>
                     <label htmlFor="slider" id="sliderLabel">Sanity: {sani}%</label>
-                                    
+                    <br/><br/>
+                    <input type="checkbox" id={"nightmare"} value={this.props.value} onChange={this.onNightmareChange.bind(this)}></input>
+                    <input type="checkbox" id={"insanity"} value={this.props.value} onChange={this.onInsanityChange.bind(this)}></input>
+                                
                 </div>
                 
                 <div className="btns-right">
                     {/* <br/> */}
                     {this.labels}
-                    <br/><br/><br/>
+                    <br/><br/>
                     <Slider callback={this.onSanityChange.bind(this)}/>
+                    <br/>
+                    <br/>
+                    <CheckBoxLabel htmlFor="nightmare" text="Nightmare?"></CheckBoxLabel>
+                    <CheckBoxLabel htmlFor="insanity" text="Insanity?"></CheckBoxLabel>
                     <br/>
                     <br/>
                     <button id="goto" onClick={goto}>Goto</button>
@@ -277,30 +469,49 @@ class Journal extends React.Component {
 
     keyDown(e) {
         if(e.shiftKey || e.ctrlKey) shifting = true;
-    }
 
-    strike() {
-        striked[selected] = !striked[selected];
+        let ghosts = possible.slice();
 
-        this.forceUpdate();
+        initKeyValues(ghosts.length > 12 ? 2 : 1);
+
+        let sel = handleKeyDown(e, ghosts, true, selected);
+
+        if(sel) {
+            selected = sel;
+            this.forceUpdate();
+        }
     }
 
     componentDidMount() {
+        possible = getPossibleGhosts();
+
+        initKeys(ghosts);
         stripURL();
 
-        document.addEventListener("keydown", this.keyDown, false);
+        document.addEventListener("keydown", this.keyDown.bind(this), false);
         document.addEventListener("keyup", (e) => this.keyUp(e, this.strike.bind(this)), false);
         
         updateCallback = this.forceUpdate.bind(this);
         evidenceCallback = this.onEvidenceChange.bind(this);
+        exclusionCallback = this.onExclusionSwitch.bind(this);
         labelCallback = this.onSelectionChange.bind(this);
 
         initInfo(this.forceUpdate.bind(this));
     }
     
     componentWillUnmount(){
-        document.removeEventListener("keydown", this.keyDown, false);
+        document.addEventListener("keydown", this.keyDown.bind(this), false);
         document.removeEventListener("keyup", (e) => this.keyUp(e, this.strike.bind(this)), false);
+    }
+
+    onNightmareChange(e) {
+        nightmare = e.target.checked;
+        updateExclusions();
+    }
+
+    onInsanityChange(e) {
+        insanity = e.target.checked;
+        updateExclusions();
     }
 
     onEvidenceChange(e) {
@@ -313,12 +524,18 @@ class Journal extends React.Component {
             selections[check.id] = check.checked;
         }
 
+        updateExclusions();
+    }
+
+    onExclusionSwitch(id) {
+        exclusions[id] = !exclusions[id];
+
         this.forceUpdate();
     }
 
     onSanityChange(e) {
         sani = e.target.value;
-        this.forceUpdate();
+        updateExclusions();
     }
 
     onSelectionChange(e) {
@@ -336,6 +553,9 @@ function initInfo(callback) {
                 let line = lines[j];
 
                 if(line.includes("Evidence: ")) evidence[ghosts[i]] = line.split(": ")[1].split(", ");
+
+                //Always gives Freezing evidence in Nightmare
+                if(line.includes("Always gives") && line.includes("evidence in Nightmare")) permanentEvidence[ghosts[i]] = line.split("gives ")[1].split(" evidence")[0];
 
                 if(line.includes("Hunts from: ")) {
                     let split = line.split("Hunts from: ")[1].split(" ");
