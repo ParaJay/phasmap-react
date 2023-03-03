@@ -470,11 +470,14 @@ class Journal extends React.Component {
     keyDown(e) {
         if(e.shiftKey || e.ctrlKey) shifting = true;
 
+        if(possible[0] == "None") possible = getPossibleGhosts();
+
         let ghosts = possible.slice();
 
         initKeyValues(ghosts.length > 12 ? 2 : 1);
 
         let sel = handleKeyDown(e, ghosts, true, selected);
+        console.log(sel);
 
         if(sel) {
             selected = sel;
@@ -489,7 +492,7 @@ class Journal extends React.Component {
         stripURL();
 
         document.addEventListener("keydown", this.keyDown.bind(this), false);
-        document.addEventListener("keyup", (e) => this.keyUp(e, this.strike.bind(this)), false);
+        document.addEventListener("keyup", (e) => this.keyUp(e, strike), false);
         
         updateCallback = this.forceUpdate.bind(this);
         evidenceCallback = this.onEvidenceChange.bind(this);
@@ -501,7 +504,7 @@ class Journal extends React.Component {
     
     componentWillUnmount(){
         document.addEventListener("keydown", this.keyDown.bind(this), false);
-        document.removeEventListener("keyup", (e) => this.keyUp(e, this.strike.bind(this)), false);
+        document.removeEventListener("keyup", (e) => this.keyUp(e, strike), false);
     }
 
     onNightmareChange(e) {
