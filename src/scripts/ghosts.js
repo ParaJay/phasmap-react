@@ -9,7 +9,7 @@ const ghosts = [
 
 class Ghost extends React.Component {
     render() {
-        return initWith(this.props, ghosts, "ghosts", "ghost");
+        return initWith(ghosts, "ghosts", "ghost");
     }
 }
 

@@ -7,10 +7,10 @@ const maps = [
     "ridgeview", "sunny_meadows", "sunny_meadows_restricted", "tanglewood", "willow"
 ]
 
-function init(props) {
+function init() {
     initKeyValues(1);
     initKeys(maps);
-    initParams("map", "camp_woodwind", props);
+    initParams("map", "camp_woodwind");
     select(def);
 }
 
@@ -65,9 +65,7 @@ class Map extends React.Component {
         );
     }
 
-    handleMapChange() {
-        this.setState({map: selected});
-    }
+    handleMapChange() { this.setState({map: selected}); }
 
     keyDown(e, cb) {
         let s = handleKeyDown(e, maps, true);
@@ -78,10 +76,9 @@ class Map extends React.Component {
     }
 
     componentDidMount(){
-        if(window.location.href.includes("?") && !window.location.href.includes("?map")) {
-            stripURL();
-        }
-        init(this.props);
+        if(window.location.href.includes("?") && !window.location.href.includes("?map")) stripURL();
+
+        init();
 
         this.setState({map: selected});
 

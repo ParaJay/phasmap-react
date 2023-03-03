@@ -9,7 +9,7 @@ let equipment = [
 
 class Equipment extends React.Component {
     render() {
-        return initWith(this.props, equipment, "equipment");
+        return initWith(equipment, "equipment");
     }
 }
 

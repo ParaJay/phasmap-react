@@ -418,7 +418,7 @@ class Journal extends React.Component {
     }
     
     componentWillUnmount(){
-        document.addEventListener("keydown", this.keyDown.bind(this), false);
+        document.removeEventListener("keydown", this.keyDown.bind(this), false);
         document.removeEventListener("keyup", (e) => this.keyUp(e, strike), false);
     }
 

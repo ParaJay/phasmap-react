@@ -5,7 +5,7 @@ const cursedItems = ["Haunted Mirror", "Monkey Paw", "Music Box", "Ouija Board",
 
 class CursedItem extends React.Component {
     render() {
-        return initWith(this.props, cursedItems, "cursed-items", "curseditem");
+        return initWith(cursedItems, "cursed-items", "curseditem");
     }
 }
 
