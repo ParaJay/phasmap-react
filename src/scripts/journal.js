@@ -14,6 +14,8 @@ const ghosts = [
 ];
 
 const permanentEvidence = {};
+const actions = [goto, strike, reset];
+const actionButtons = [];
 
 const checkVals = {
     orbs: "Ghost Orbs",
@@ -44,8 +46,7 @@ var selected;
 var shifting = false;
 
 function getPossibleGhosts() {
-    let evs = [];
-    let exc = [];
+    let evs = [], exc = [];
 
     let sKeys = Object.keys(selections);
 
@@ -70,10 +71,8 @@ function getPossibleGhosts() {
                 if(!evi.includes(document.getElementById(e).value)) pass = false;
             });
 
-            if(pass) {
-                if(!first.includes(ghost)) {
-                    first.push(ghost);
-                }
+            if(pass && !first.includes(ghost)) {
+                first.push(ghost);
             }
         });
     } else {
@@ -110,7 +109,7 @@ function getPossibleGhosts() {
     
     if(insanity) third = difficultyCheck(third, 1, 2);
 
-    if(third.length == 0) third.push("None");
+    if(third.length === 0) third.push("None");
 
     return third;
 }
@@ -131,15 +130,7 @@ function difficultyCheck(third, max, off) {
             } else {
                 let size = evidence[ghost].length;
 
-                if(count == size - off) {                       
-                    if(permanentEvidence[ghost]){
-                        let ps = selections[reverseCheck(permanentEvidence[ghost])];
-
-                        if(!ps) {
-                            rem.push(ghost);
-                        }
-                    }
-                } else if(count > size - off) {
+                if(count >= size - off) {                       
                     if(permanentEvidence[ghost]){
                         let ps = selections[reverseCheck(permanentEvidence[ghost])];
 
@@ -152,9 +143,7 @@ function difficultyCheck(third, max, off) {
         }
     }
 
-    for(let i = 0; i < rem.length; i++) {
-        third.splice(third.indexOf(rem[i]), 1);
-    }
+    for(let i = 0; i < rem.length; i++) third.splice(third.indexOf(rem[i]), 1);
 
     return third;
 }
@@ -162,13 +151,7 @@ function difficultyCheck(third, max, off) {
 function reverseCheck(checkFor) {
     let keys = Object.keys(checkVals);
 
-    for(let i = 0; i < keys.length; i++) {
-        let value = checkVals[keys[i]];
-
-        if(value == checkFor) {
-            return keys[i];
-        }
-    }
+    for(let i = 0; i < keys.length; i++) if(checkVals[keys[i]] === checkFor) return keys[i];
 
     return null;
 }
@@ -209,6 +192,68 @@ function reset() {
     window.location.reload();
 }
 
+function l(t, k=t) {
+    return <Label key={k} text={t}></Label>;
+}
+
+function updateExclusions() {
+    let keys = Object.keys(checkVals);
+    let selected = [];
+
+    for(let i = 0; i < keys.length; i++) if(selections[keys[i]]) selected.push(keys[i]);
+
+    possible = getPossibleGhosts();
+
+    for(let i = 0; i < keys.length; i++) {
+        if(!isPossible(keys[i], selected)) {
+            exclusions[keys[i]] = true;
+            autoExcluded.push(keys[i]);
+        } else {
+            while(autoExcluded.includes(keys[i])) {
+                exclusions[keys[i]] = false;
+                autoExcluded.splice(autoExcluded.indexOf(keys[i]), 1);
+            }
+        }
+    }
+
+    updateCallback();
+}
+
+function isPossible(evi) {
+    let found = [];
+    let ghosts = possible.slice();
+
+    if(ghosts.length === 0 || ghosts[0] === "None") return true;
+    let count = countSelections();
+
+    for(let i = 0; i < ghosts.length; i++) {
+        if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(checkVals[evi])) found.push(ghosts[i]);
+
+        if(found.includes(ghosts[i]) && striked[ghosts[i]]) found.splice(found.indexOf(ghosts[i]), 1);
+
+        for(let j = 0; j < 2; j++) {
+            let b = j === 0 ? nightmare : insanity;
+
+            if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - (j + 1) && b) {
+                found.splice(found.indexOf(ghosts[i]), 1);
+            }
+
+            if(found.includes(ghosts[i]) && count === evidence[ghosts[i]].length - (j + 1) && b) {
+                if(permanentEvidence[ghosts[i]]) {
+                    if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) found.splice(found.indexOf(ghosts[i]), 1);
+                } else {
+                    if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
+                }
+            }
+    
+        }
+    }
+
+    return found.length > 0;
+}
+
+function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
 class Slider extends React.Component {
     render() {
         return (
@@ -223,18 +268,9 @@ class CheckBox extends React.Component {
     }
 
     componentDidMount() {
-        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { 
-            evidenceCallback(e);
-        }}
-        onMouseUp={(e) => {
-            if(e.button == 1) {
-                exclusionCallback(this.props.id);
-            }
-        }}
-        />);
+        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { evidenceCallback(e); }} onMouseUp={(e) => { if(e.button === 1) exclusionCallback(this.props.id); }} />);
 
-        if(!checks.includes(this.check.id))
-            checks.push(this.check.id);
+        if(!checks.includes(this.check.id)) checks.push(this.check.id);
     }
 }
 
@@ -260,107 +296,17 @@ class CheckBoxLabel extends React.Component {
         if(exclusions[f]) text += " (NOT)";
 
         return <label className="journal-check-label" htmlFor={f} onMouseUp={(e) => {
-            if(e.button == 1 && checkVals[f]) {
-                exclusionCallback(f);
-            }
+            if(e.button === 1 && checkVals[f]) exclusionCallback(f);
         }}>{text}</label>;
     }
 }
 
-//TODO: fix
-function p(am) {
-    let text = "";
+class ActionButton extends React.Component {
+    render() {
+        let action = this.props.action;
 
-    for(let i = 0; i < am; i++) text += "_";
-
-    return l(text, "blank");
-}
-
-function l(t, k=t) {
-    return <Label key={k} text={t}></Label>;
-}
-
-//TODO: nightmare/insanity
-function updateExclusions() {
-    // console.log("updating exclusions");
-
-    let keys = Object.keys(checkVals);
-    let selected = [];
-
-    for(let i = 0; i < keys.length; i++) {
-        if(selections[keys[i]]) {
-            selected.push(keys[i]);
-        }
+        return(<><br/><button id={action.name} onClick={action}>{capitalize(action.name)}</button></>)
     }
-
-    possible = getPossibleGhosts();
-
-    for(let i = 0; i < keys.length; i++) {
-        if(!isPossible(keys[i], selected)) {
-            // console.log("not: " + keys[i]);
-            exclusions[keys[i]] = true;
-            autoExcluded.push(keys[i]);
-            // selections[keys[i]] = false;
-        } else {
-            while(autoExcluded.includes(keys[i])) {
-                exclusions[keys[i]] = false;
-                autoExcluded.splice(autoExcluded.indexOf(keys[i]), 1);
-            }
-        }
-    }
-
-    updateCallback();
-}
-
-function isPossible(evi) {
-    let found = [];
-    let ghosts = possible.slice();
-
-    if(ghosts.length == 0 || ghosts[0] == "None") return true;
-    let count = countSelections();
-
-    // if(count == 2 && nightmare && !selections[evi]) return false;
-    // if(count == 1 && insanity && !selections[evi]) return false;
-
-    for(let i = 0; i < ghosts.length; i++) {
-        if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(checkVals[evi])) {
-            found.push(ghosts[i]);
-        }
-
-        if(found.includes(ghosts[i]) && striked[ghosts[i]]) {
-            found.splice(found.indexOf(ghosts[i]), 1);
-        }
-
-        if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - 1 && nightmare) {
-            found.splice(found.indexOf(ghosts[i]), 1);
-        }
-
-        if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - 2 && insanity) {
-            found.splice(found.indexOf(ghosts[i]), 1);
-        }
-
-        if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 1 && nightmare) {
-            if(permanentEvidence[ghosts[i]]) {
-                if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) {
-                    found.splice(found.indexOf(ghosts[i]), 1);
-                }
-            } else {
-                if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
-            }
-        }
-
-        if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 2 && insanity) {
-            if(permanentEvidence[ghosts[i]]) {
-                if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) {
-                    found.splice(found.indexOf(ghosts[i]), 1);
-                }
-            } else {
-                if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
-            }
-        }
-    }
-
-    return found.length > 0;
 }
 
 class Journal extends React.Component {
@@ -371,32 +317,14 @@ class Journal extends React.Component {
         let ghosts = getPossibleGhosts();
 
         let left = [], right = [], center = [];
-        let x = 0;
-        let highest = 0;
 
         for(let i = 0; i < ghosts.length; i++) {
-            let g = ghosts[i];
+            let lbl = l(ghosts[i]);
 
             if(ghosts.length > 12) {
-                (i % 2 === 0 ? left : right).push(l(g));
-                
-                if(x === 0) {
-                    center.push(p(10));
-    
-                    x++;
-                }
+                (i % 2 === 0 ? left : right).push(lbl);
             } else {
-                if(x === 0) {
-                    let cl = ((30 - highest) / 2) - 1;
-                    let cl2 = cl % 2 === 0 ? cl : cl - 1;
-                    
-                    left.push(p(cl));
-                    right.push(p(cl2));
-                    
-                    x++;
-                }
-    
-                center.push(l(g));
+                center.push(lbl);
             }
         }
         
@@ -409,11 +337,10 @@ class Journal extends React.Component {
             let key = keys[i];
             let value = checkVals[key];
             
-            if(!value) value = key.charAt(0).toUpperCase() + key.slice(1);
+            if(!value) value = capitalize(key);
 
             this.checks.push(<CheckBox key={key} id={key} value={value}/>);  
-
-            this.labels.push(<CheckBoxLabel key={"l" + key} htmlFor={key} text={value}/>);
+            this.labels.push(<CheckBoxLabel key={"l-" + key} htmlFor={key} text={value}/>);
         }
 
         return (
@@ -437,21 +364,14 @@ class Journal extends React.Component {
                 </div>
                 
                 <div className="btns-right">
-                    {/* <br/> */}
                     {this.labels}
                     <br/><br/>
                     <Slider callback={this.onSanityChange.bind(this)}/>
-                    <br/>
-                    <br/>
+                    <br/><br/>
                     <CheckBoxLabel htmlFor="nightmare" text="Nightmare?"></CheckBoxLabel>
                     <CheckBoxLabel htmlFor="insanity" text="Insanity?"></CheckBoxLabel>
                     <br/>
-                    <br/>
-                    <button id="goto" onClick={goto}>Goto</button>
-                    <br/>
-                    <button id="strike" onClick={strike}>Strike</button>
-                    <br/>
-                    <button id="reset" onClick={reset}>Reset</button>
+                    {actionButtons}
                 </div>           
             </div>
         )
@@ -466,14 +386,13 @@ class Journal extends React.Component {
     keyDown(e) {
         if(e.shiftKey || e.ctrlKey) shifting = true;
 
-        if(possible[0] == "None") possible = getPossibleGhosts();
+        if(possible[0] === "None") possible = getPossibleGhosts();
 
         let ghosts = possible.slice();
 
         initKeyValues(ghosts.length > 12 ? 2 : 1);
 
         let sel = handleKeyDown(e, ghosts, true, selected);
-        console.log(sel);
 
         if(sel) {
             selected = sel;
@@ -553,7 +472,6 @@ function initInfo(callback) {
 
                 if(line.includes("Evidence: ")) evidence[ghosts[i]] = line.split(": ")[1].split(", ");
 
-                //Always gives Freezing evidence in Nightmare
                 if(line.includes("Always gives") && line.includes("evidence in Nightmare")) permanentEvidence[ghosts[i]] = line.split("gives ")[1].split(" evidence")[0];
 
                 if(line.includes("Hunts from: ")) {
@@ -579,3 +497,5 @@ function initInfo(callback) {
 }
 
 export default Journal;
+
+for(let i = 0; i < actions.length; i++) actionButtons.push(<ActionButton key={"act" + i} action={actions[i]}/>)
