@@ -302,7 +302,7 @@ function updateExclusions() {
             autoExcluded.push(keys[i]);
             // selections[keys[i]] = false;
         } else {
-            if(autoExcluded.includes(keys[i])) {
+            while(autoExcluded.includes(keys[i])) {
                 exclusions[keys[i]] = false;
                 autoExcluded.splice(autoExcluded.indexOf(keys[i]), 1);
             }
@@ -345,7 +345,7 @@ function isPossible(evi) {
                     found.splice(found.indexOf(ghosts[i]), 1);
                 }
             } else {
-                found.splice(found.indexOf(ghosts[i]), 1);
+                if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
             }
         }
 
@@ -355,13 +355,9 @@ function isPossible(evi) {
                     found.splice(found.indexOf(ghosts[i]), 1);
                 }
             } else {
-                found.splice(found.indexOf(ghosts[i]), 1);
+                if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
             }
         }
-
-        // if(found.includes(ghosts[i]) && count == evidence[ghosts[i]].length - 2 && insanity) {
-        //     found.splice(found.indexOf(ghosts[i]), 1);
-        // }
     }
 
     return found.length > 0;
