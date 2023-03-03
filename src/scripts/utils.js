@@ -101,7 +101,7 @@ function getFromKey(key) {
     return res;
 }
 
-export function handleKeyDown(e, array, ret=false) {
+export function handleKeyDown(e, array, ret=false, sel=selected) {
     if(!kval) initKeyValues();
 
     let s;
@@ -109,9 +109,9 @@ export function handleKeyDown(e, array, ret=false) {
     let am = kval[key];
 
     if(am) {
-        s = getNext(array, am, ret);
+        s = getNext(array, am, ret, sel);
     } else {
-        s = handleKey(key, ret);
+        s = handleKey(key, ret, sel);
     }
 
     if(s && ret) {
@@ -119,7 +119,7 @@ export function handleKeyDown(e, array, ret=false) {
     }
 }
 
-export function handleKey(key, ret=false) {
+export function handleKey(key, ret=false, sel=selected) {
     if(key.length !== 1) return;
     if(!key.match("[a-zA-Z]")) return;
 
@@ -136,7 +136,7 @@ export function handleKey(key, ret=false) {
         return;
     }
 
-    let index = array.indexOf(selected) + 1;
+    let index = sel ? array.indexOf(sel) + 1 : 0;
 
     if(index === array.length) index = 0;
 
@@ -145,21 +145,23 @@ export function handleKey(key, ret=false) {
     } else {
         select(array[index]);
     }
-    
-    // select(cursedItems[index]);
 }
 
-export function getNext(array, am, ret=false) {
-    let index = array.indexOf(selected);
+export function getNext(array, am, ret=false, sel=selected) {
+    let index = array.indexOf(sel);
 
-    for(let i = 0; i < Math.abs(am); i++) {
-        let ii = am < 0 ? -1 : 1;
+    if(sel) {
+        for(let i = 0; i < Math.abs(am); i++) {
+            let ii = am < 0 ? -1 : 1;
 
-        index += ii;
+            index += ii;
 
-        if(index === array.length) index = 0;
+            if(index === array.length) index = 0;
 
-        if(index < 0) index = array.length - 1;
+            if(index < 0) index = array.length - 1;
+        }
+    } else {
+        index = 0;
     }
 
     if(ret) {
