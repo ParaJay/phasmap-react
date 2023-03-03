@@ -46,12 +46,12 @@ class Info extends React.Component {
                     </div>
 
                     <div className="btns-left">
-                        <br/><br/><br/><br/>
+                        <br/><br/><br/><p className="breaker"/>
                         {left}
                     </div>
 
                     <div className="btns-right">
-                        <br/><br/><br/><br/>
+                        <br/><br/><br/><p className="breaker"/>
                         {right}
                     </div>
                 </div>
