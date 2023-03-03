@@ -1,88 +1,58 @@
 import queryString from 'query-string';
 
-export var text;
-export var infoHeader;
-export var buttons;
-
 const keys = {};
 
-export var selected;
-export var info;
-export var def;
-export var kval;
+export var selected, info, def, kval;
 
-export function initKeyValues(kvalMax=2) {
-    kval = {ArrowUp:-kvalMax, ArrowDown:kvalMax, ArrowLeft: -1, ArrowRight: 1};
-}
+export function initKeyValues(kvalMax=2) { kval = {ArrowUp:-kvalMax, ArrowDown:kvalMax, ArrowLeft: -1, ArrowRight: 1}; }
 
-export function setSelected(sel) {
-    selected = sel;
-}
+export function setSelected(sel) { selected = sel; }
 
-export async function initInfoState(props, array, param, def=array[0]) {
+export async function initInfoState(array, param, def=array[0]) {
     initKeyValues(2);
 
     initKeys(array);
-    initParams(param, def, props);
+    initParams(param, def);
 
     selectDef();
 }
 
-export function initParams(param, deff, props, repA, repB) {   
+export function initParams(param, deff, repA, repB) {   
     def = deff;
 
     let query = window.location.search;
-
-    console.log(query);
 
     if(query) {
         let params = queryString.parse(query);
         let item = params[param];
 
-        console.log(item);
-
-        if(item) def = item;
-
-        if(repA && repB) {
-            item = item.replaceAll(repA, repB);
-        }
+        if(repA && repB) item = item.replaceAll(repA, repB);
 
         if(item) def = item;
     }
 }
 
-export function selectDef() {
-    select(def);
-}
+export function selectDef() { select(def); }
 
-export function initAll(array) {
-    initKeys(array);
-}
+export function initAll(array) { initKeys(array); }
 
 export function initKeys(array) {
     array.forEach(item => {
         let split = item.replaceAll("_", " ").split(" ");
         let val = [];
-        split.forEach(e => {
-            val.push(e.charAt(0).toUpperCase());
-        });
+
+        split.forEach(e => val.push(e.charAt(0).toUpperCase()));
 
         keys[item] = val;
     });
 }
 
-export function setInfo(i) {
-    info = i;
-}
+export function setInfo(i) { info = i; }
 
 export function readInfo(filename, dir) {
     filename = filename.toLowerCase().replaceAll(" ", "");
 
-    return new Promise((resolve) => {
-        fetch(require("../res/" + dir + "/" + filename + ".txt")).then((r)=>{r.text().then(d=>{
-            resolve(d);
-        })});
-    });   
+    return new Promise((resolve) => { fetch(require(`../res/${dir}/${filename}.txt`)).then((r)=>{r.text().then(d => {resolve(d); })}); });   
 }
 
 function getFromKey(key) {
@@ -93,9 +63,7 @@ function getFromKey(key) {
         let okey = okeys[i];
         let val = keys[okey];
 
-        if(val.includes(key)) {
-            res.push(okey);
-        }
+        if(val.includes(key)) res.push(okey);
     }
 
     return res;
@@ -104,19 +72,11 @@ function getFromKey(key) {
 export function handleKeyDown(e, array, ret=false, sel=selected) {
     if(!kval) initKeyValues();
 
-    let s;
     let key = e.key;
     let am = kval[key];
+    let s = am ? getNext(array, am, ret, sel) : handleKey(key, ret, sel);
 
-    if(am) {
-        s = getNext(array, am, ret, sel);
-    } else {
-        s = handleKey(key, ret, sel);
-    }
-
-    if(s && ret) {
-        return s;
-    }
+    if(s && ret) return s;
 }
 
 export function handleKey(key, ret=false, sel=selected) {
@@ -133,6 +93,7 @@ export function handleKey(key, ret=false, sel=selected) {
         } else {
             select(array[0]);
         }
+
         return;
     }
 
@@ -171,11 +132,7 @@ export function getNext(array, am, ret=false, sel=selected) {
     }
 }
 
-export function select(item) {
-    if(selected === item) return;
-
-    selected = item;
-}
+export function select(item) { selected = item; }
 
 //TODO: only take non-excluded
 export function stripURL() {

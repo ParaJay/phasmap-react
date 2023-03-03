@@ -2,6 +2,9 @@ import { initInfoState, setSelected, selected, readInfo, handleKeyDown, stripURL
 import * as Utils from "./utils.js";
 import React from "react";
 
+const info = {};
+var array, dir, def;
+
 class InfoButton extends React.Component {
     render() {
         let cn = selected === this.props.text ? "selectedButton" : "infoButton";
@@ -16,11 +19,7 @@ class InfoButton extends React.Component {
 }
 
 class InfoHeader extends React.Component {
-    render() {
-        return (
-            <p id="infoHeader">{this.props.text}</p>
-        )
-    }
+    render() { return (<p id="infoHeader">{this.props.text}</p>) }
 }
 
 class Info extends React.Component {
@@ -28,14 +27,9 @@ class Info extends React.Component {
     cb = this.handleSelectionChange.bind(this);
 
     render() {
-        let left = [];
-        let right = [];
+        let left = [], right = [];
 
-        for(let i = 0; i < array.length; i++) {
-            (i % 2 === 0 ? left : right).push(
-                <InfoButton key={array[i]} text={array[i]} callback={this.cb}></InfoButton>
-            )
-        }
+        for(let i = 0; i < array.length; i++) (i % 2 === 0 ? left : right).push(<InfoButton key={array[i]} text={array[i]} callback={this.cb}></InfoButton>)
 
         return (
             <div id="main-wrapper">       
@@ -66,9 +60,7 @@ class Info extends React.Component {
 
             done.push(true);
 
-            if(done.length === array.length) {
-                this.setState({selection: def});
-            }
+            if(done.length === array.length) this.setState({selection: def});
         };
 
         document.addEventListener("keydown", (e) => {
@@ -93,20 +85,15 @@ class Info extends React.Component {
     }
 }
 
-export default Info;
+export default Info
 
-const info = {};
-var array, dir, def;
-
-export function initWith(props, arr, d, param=d, de=arr[0]) {   
+export function initWith(arr, dr, param=dr, de=arr[0]) {   
     array = arr;
-    dir = d;
+    dir = dr;
 
-    initInfoState(props, arr, param, de);
+    initInfoState(arr, param, de);
 
-    if(window.location.href.includes("?") && !window.location.href.includes("?" + param)) {
-        stripURL();
-    }
+    if(window.location.href.includes("?") && !window.location.href.includes("?" + param)) stripURL();
 
     def = Utils.def;
 
