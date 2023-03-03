@@ -1,0 +1,3 @@
+Cost: $10
+
+Max Amount: 4

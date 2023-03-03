@@ -1,0 +1,18 @@
+Evidence: EMF 5, Ghost Orbs, Fingerprints
+
+Always gives Fingerprints evidence in Nightmare
+
+Hunts from: 50%
+
+75% chance to leave Fingerprints
+
+Chance for Fingerprints to disappear after 1 minute (as opposed to the usual 2 minutes
+
+20-25% chance to leave behind:
+    Unique 6 fingered handprint
+    2 fingerprints on light switch
+    5 fingerprints on keyboards and prison cell doors instead of 4
+
+Occasionally triggers an ability which reduces the remaining time of all fingerprints on the map by half (can be triggered multiple times so fingerprints could potentially disappear immediately)
+
+During a hunt, has a 6.66% chance each time it flicks to shapeshift into a different ghost model and then return back to its original model (guaranteed once per hunt)

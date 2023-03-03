@@ -1,0 +1,141 @@
+Activating the Ouija Board will cancel the setup phase
+
+If the player walks 5 metres away from an activated Ouija Board or if they don't have enough sanity to ask a question the board will break and trigger a cursed hunt
+
+If a question is recognised an EMF 2 reading will be generated. If the ghost has EMF 5 as evidence, there is a 25% chance to generate EMF 5 reading instead
+
+Location: 
+	Questions: 
+		Where are you?
+		What is your favourite room?
+		Where is your room?
+		What is your room?
+	Sanity: 40% (32% for Demon)
+Hide and Seek: 
+	Questions: 
+		Do you want to play hide and seek?
+		Hide and seek?
+	Answer: counts from 5 to 0
+	Sanity: 25% (20% for Demon)
+Location non-specific: 
+	Questions: 
+		Are you here?
+		Are you close?
+	Answers: Yes/No
+	Sanity: 20% (16% for Demon)
+Bone Location: 
+	Questions: 
+		Where is the bone?
+		Where did you die?
+		Where is the body?
+	Sanity: 20% (16% for Demon)
+Room Count: 
+	Questions: 
+		How many are in this room?
+		How many people are in this room?
+		How many people are here?
+		How many ghosts are in this room?
+		How many ghosts are here?
+		Are you alone?
+		Are we alone?
+		Who is here?
+		Who is in this room?
+		How many ghosts are present?
+		How many people are present?
+	Answers: ???
+	Sanity: 20% (16% for Demon)
+Shyness: 
+	Questions: 
+		Do you respond to everyone?
+	Answers: Yes/No
+	Sanity: 20% (16% for Demon)
+Age: 
+	Questions: 
+		How old are you?
+		What is your age?
+		Are you old?
+		Are you young?
+	Answers: 2 - 90
+	Sanity: 5% (4% for Demon)
+Death: 
+	Questions: 
+		How long have you been dead?
+		How many years ago did you die?
+		How long have you been here?
+		How long ago did you die?
+		When did you die
+	Answers: 50 - 1000
+	Sanity: 5% (4% for Demon)
+Sanity: 
+	Questions: 
+		What is my sanity?
+			Answers: 
+				> 80%: Healthy
+				60% - 80%: Good
+				40% - 60%: Average
+				20% - 40%: Bad
+				below 20%: Awful
+		How crazy am I?
+		How insane am I?
+			Answers: 
+				> 50%: Not Very
+				25% - 50%: Very
+				below 25%: Insane
+		Am I insane?
+			Answers: 
+				> 90%: No
+				20% - 90%: Maybe
+				below 20%: Yes
+	Sanity: 5% (4% for Demon)
+Method of Death: 
+	Questions: 
+		How did you die?
+	Answers: (incomplete)
+		Accident
+		Drowned
+		Murder
+		Shot
+		Slipped
+		Fell
+	Sanity: 5% (4% for Demon)
+Yes or No: 
+	Questions: 
+		Am I pretty?
+		Are we friends?
+		Do you hate me?
+		Do you like jazz?
+	Answers: Yes/No/Maybe
+	Sanity: 5% (4% for Demon)
+Feeling: 
+	Questions: 
+		How do you feel?
+		Are you okay?
+		How are you?
+	Answers: (incomplete)
+		Cold
+		Empty
+		Strong
+		Weak
+		Angry
+		Sick
+		Lonely
+	Sanity: 5% (4% for Demon)
+Purpose: 
+	Questions: 
+		Why are you here?
+		What do you want?
+	Answers: (incomplete)
+		Love
+		Scared
+		Revenge
+		You
+		Hatred
+		Kill
+	Sanity: 5% (4% for Demon)
+Joke: 
+	Questions: 
+		Knock Knock
+			Answers: Who's there
+		Marco
+			Answers: Polo
+	Sanity: 5% (4% for Demon)

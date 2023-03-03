@@ -1,0 +1,164 @@
+@font-face {
+	font-family: "October Crow";
+	src: url("./OctoberCrow.ttf");
+}
+
+#infoHeader {
+    text-align: center;
+    font-family: "October Crow";
+    font-size: 30px;
+}
+
+#text {
+    margin: 0px 12px;
+    resize: none;
+}
+
+.sub-wrapper {
+    width: 70%;
+}
+
+.wrapper, .sub-sub-wrapper {
+    display: flex;
+    /* justify-content: center; */
+}
+
+.btns-left, .btns-right {
+    width: 12%;
+}
+
+#sliderLabel {
+    text-align: center;
+}
+
+.jleft, .jright, .jcenter {
+    padding: 0px 60px;
+    /* position: relative; */
+}
+
+.btns-left, .btns-right, .jleft, .jright, .jcenter {
+    display: flex;
+    flex-direction: column;
+}
+
+* {
+    color: rgb(202, 201, 201);
+}
+
+textarea, body {
+    background-color: rgb(60, 63, 65);
+    border-color: rgb(94, 97, 98);
+}
+
+input {
+    accent-color: rgb(48, 50, 52);
+}
+
+.navbar a {
+    text-decoration: none;
+}
+
+button, label {
+    margin: 6px 6px;
+}
+
+input {
+    margin: 8.75px 6px;
+}
+
+button, box {
+    border-radius: 12%;
+    background-color: rgb(78, 80, 82);
+    border-color: rgb(94, 97, 98);
+    padding: 5px 4px;
+    text-align: center;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+ }
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 30px;
+    text-align: center;
+    background-color: rgb(78, 80, 82);
+}
+
+.dropdown-content a { padding: 5px 4px; }
+
+.dropdown-content a:hover, .navbar button:hover {background-color: darkcyan;}
+
+.dropdown:hover .dropdown-content {
+   display: flex;
+   flex-direction: column;
+}
+
+.img-wrapper {
+    display: grid;
+    height: 100%;
+}
+
+#canvas {
+    width: 80vh;
+    max-width: 100%;
+    margin: auto;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+}
+
+.infoButton {
+    color: rgb(202, 201, 201);
+}
+
+.selectedButton {
+    color: orange;
+}
+
+.journal-defs {
+    font-size: 24px;
+    font-family: "October Crow";
+    text-align: center;
+    padding: 4px 4px;
+    margin: 5px;
+}
+
+.journal-check-box {
+    /* margin: 8px; */
+    margin-top: 6%;
+}
+
+.journal-check-label {
+    margin: 4%;
+    text-align: center;
+}
+
+.journal-label {
+    color: rgb(202, 201, 201);
+    text-decoration: none;
+}
+
+.journal-selected {
+    color: orange;
+    text-decoration: none;
+}
+
+.journal-striked {
+    color: rgb(128, 128, 128);
+    text-decoration: line-through;
+}
+
+.journal-blank {
+    color: rgb(60, 63, 65);
+}
+
+.journal-wrapper {
+    display: flex;
+    justify-content: center;
+}
