@@ -1,21 +1,13 @@
 import React from "react";
 import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys } from "./utils.js";
 
-const checks = [];
-
-//TODO: arrow keys
-//TODO: select by charKey
-//TODO: auto exclude when evidence unavailable
-
 const ghosts = [
     "Banshee", "Demon", "Deogen", "Goryo", "Hantu", "Jinn", "Mare", "Moroi", "Myling",
     "Obake", "Oni", "Onryo", "Phantom", "Poltergeist", "Raiju", "Revenant", "Shade",
     "Spirit", "Thaye", "The Mimic", "The Twins", "Wraith", "Yokai", "Yurei"
 ];
 
-const permanentEvidence = {};
 const actions = {"goto":goto, "strike":strike, "reset":reset};
-const actionButtons = [];
 
 const checkVals = {
     orbs: "Ghost Orbs",
@@ -27,40 +19,22 @@ const checkVals = {
     writing: "Ghost Writing"
 };
 
-var possible;
-var updateCallback;
-var evidenceCallback;
-var exclusionCallback;
-var labelCallback;
-var sani = 0;
-const selections = {}
-const exclusions = {};
-const autoExcluded = [];
-const evidence = {}
-const striked = {};
-const sanity = {};
-var nightmare;
-var insanity;
-var selected;
-
 var shifting = false;
+var sani = 0;
+var possible, selected, nightmare, insanity;
+var updateCallback, evidenceCallback, exclusionCallback, labelCallback;
+const selections={}, exclusions={}, evidence={}, striked={}, sanity={}, permanentEvidence={}, autoExcluded=[], actionButtons=[], checks=[];
 
 function getPossibleGhosts() {
-    let evs = [], exc = [];
+    let evs = [], exc = [], first = [], second = [], third = [];
 
-    let sKeys = Object.keys(selections);
-
-    sKeys.forEach(e => {
-        let id = e;
-
+    Object.keys(selections).forEach(e => {
         if(exclusions[e]) {
-            exc.push(id);
+            exc.push(e);
         } else {
-            if(selections[e]) evs.push(id);
+            if(selections[e]) evs.push(e);
         }
     });
-
-    let first = [];
 
     if(evs.length > 0) {
         ghosts.forEach(ghost => {
@@ -79,8 +53,6 @@ function getPossibleGhosts() {
         first = ghosts.slice();
     }
 
-    let second = [];
-
     if(exc.length > 0) {
         first.forEach(ghost => {
             let pass = true;
@@ -98,8 +70,6 @@ function getPossibleGhosts() {
     } else {
         second = first.slice();
     }
-
-    let third = [];
 
     second.forEach(ghost => {
         if(sanity[ghost] >= sani) third.push(ghost);
@@ -156,14 +126,9 @@ function reverseCheck(checkFor) {
 
 function countSelections() {
     let count = 0;
-
     let keys = Object.keys(selections);
 
-    for(let i = 0; i < keys.length; i++) {
-        let selection = selections[keys[i]];
-
-        if(selection) count++;
-    }
+    for(let i = 0; i < keys.length; i++) if(selections[keys[i]]) count++;
 
     return count;
 }
@@ -186,13 +151,9 @@ function strike() {
     updateCallback();
 }
 
-function reset() {
-    window.location.reload();
-}
+function reset() { window.location.reload(); }
 
-function l(t, k=t) {
-    return <Label key={k} text={t}></Label>;
-}
+function l(t, k=t) { return <Label key={k} text={t}></Label>; }
 
 function updateExclusions() {
     let keys = Object.keys(checkVals);
@@ -222,19 +183,17 @@ function isPossible(evi) {
     let ghosts = possible.slice();
 
     if(ghosts.length === 0 || ghosts[0] === "None") return true;
+
     let count = countSelections();
 
     for(let i = 0; i < ghosts.length; i++) {
         if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(checkVals[evi])) found.push(ghosts[i]);
-
         if(found.includes(ghosts[i]) && striked[ghosts[i]]) found.splice(found.indexOf(ghosts[i]), 1);
 
         for(let j = 0; j < 2; j++) {
             let b = j === 0 ? nightmare : insanity;
 
-            if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - (j + 1) && b) {
-                found.splice(found.indexOf(ghosts[i]), 1);
-            }
+            if(found.includes(ghosts[i]) && count > evidence[ghosts[i]].length - (j + 1) && b) found.splice(found.indexOf(ghosts[i]), 1);
 
             if(found.includes(ghosts[i]) && count === evidence[ghosts[i]].length - (j + 1) && b) {
                 if(permanentEvidence[ghosts[i]]) {
@@ -253,17 +212,11 @@ function isPossible(evi) {
 function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
 class Slider extends React.Component {
-    render() {
-        return (
-            <input id="slider" defaultValue="0" type="range" min="0" max="100" value={this.props.val} onInput={this.props.callback}/>
-        )
-    }
+    render() { return (<input id="slider" defaultValue="0" type="range" min="0" max="100" value={this.props.val} onInput={this.props.callback}/>) }
 }
 
 class CheckBox extends React.Component {
-    render() {
-        return this.check;
-    }
+    render() { return this.check; }
 
     componentDidMount() {
         this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { evidenceCallback(e); }} onMouseUp={(e) => { if(e.button === 1) exclusionCallback(this.props.id); }} />);
