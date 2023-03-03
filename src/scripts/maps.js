@@ -29,9 +29,7 @@ function change(am) {
 }
 
 class Button extends React.Component {
-    render() {
-        return <button onClick={this.props.onclick}>{this.props.text}</button>
-    }
+    render() { return <button onClick={this.props.onclick}>{this.props.text}</button> }
 }
 
 class Map extends React.Component {
@@ -87,7 +85,6 @@ class Map extends React.Component {
 
         this.setState({map: selected});
 
-        // document.addEventListener("keydown", (e) => this.keyDown(e, () => this.setState({map: selected}).bind(this)).bind(this), false);
         document.addEventListener("keydown", (e) => {
             this.keyDown(e, () => this.setState({map: selected}));
         }, false);
@@ -99,7 +96,5 @@ class Map extends React.Component {
         }, false);
     }
 }
-
-// init();
 
 export default Map;
