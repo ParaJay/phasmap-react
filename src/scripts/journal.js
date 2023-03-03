@@ -126,9 +126,12 @@ class CheckBox extends React.Component {
     }
 
     componentDidMount() {
-        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onChange={evidenceCallback}/>);
+        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onChange={(e) => { 
+            evidenceCallback(e);
+        }}/>);
 
-        checks.push(this.check.id);
+        if(!checks.includes(this.check.id))
+            checks.push(this.check.id);
     }
 }
 
