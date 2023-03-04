@@ -6,20 +6,32 @@ const actions = {"goto":goto, "strike":strike, "reset":reset};
 
 var shifting = false;
 var sani = 0;
-var possible, selected, nightmare, insanity;
+var selected, nightmare, insanity;
 var updateCallback, evidenceCallback, exclusionCallback, labelCallback;
 const selections={}, exclusions={}, evidence={}, striked={}, sanity={}, permanentEvidence={}, autoExcluded=[], actionButtons=[], checks=[];
 
 function getPossibleGhosts(ret=3) {
-    let evs = [], exc = [], first = [], second = [], third = [];
+    let first = [], second = [], third = [];
 
-    Object.keys(evidenceMap).forEach(e => {
-        if(exclusions[e] === true) {
-            exc.push(e);
-        } else {
-            if(selections[e] === true) evs.push(e);
-        }
-    });
+    first = applySelectionFilter();
+
+    if(ret == 1) return first;
+
+    second = applyExclusionFilter(first);
+
+    if(ret == 2) return second;
+
+    third = applySanityFilter(second);
+    third = applyDifficultyFilters(third);
+
+    if(third.length === 0) third.push("None");
+
+    return third;
+}
+
+function applySelectionFilter() {
+    let res = [];
+    let evs = Object.keys(evidenceMap).filter(e => selections[e]);
 
     if(evs.length > 0) {
         ghosts.forEach(ghost => {
@@ -30,18 +42,22 @@ function getPossibleGhosts(ret=3) {
                 if(!evi.includes(document.getElementById(e).value)) pass = false;
             });
 
-            if(pass && !first.includes(ghost)) {
-                first.push(ghost);
+            if(pass && !res.includes(ghost)) {
+                res.push(ghost);
             }
         });
     } else {
-        first = ghosts.slice();
+        res = ghosts.slice();
     }
 
-    if(ret == 1) return first;
+    return res;
+}
+
+function applyExclusionFilter(array, exc=Object.keys(evidenceMap).filter(e => exclusions[e])) {
+    let res = [];
 
     if(exc.length > 0) {
-        first.forEach(ghost => {
+        array.forEach(ghost => {
             let pass = true;
 
             for(let i = 0; i < exc.length; i++) {
@@ -52,23 +68,13 @@ function getPossibleGhosts(ret=3) {
                 }
             };
 
-            if(pass && !second.includes(ghost)) second.push(ghost);
+            if(pass && !res.includes(ghost)) res.push(ghost);
         });
     } else {
-        second = first.slice();
+        res = array.slice();
     }
 
-    if(ret == 2) return second;
-
-    third = applySanityFilter(second);
-
-    if(nightmare) third = difficultyCheck(third, 2, 1);
-    
-    if(insanity) third = difficultyCheck(third, 1, 2);
-
-    if(third.length === 0) third.push("None");
-
-    return third;
+    return res;
 }
 
 function applySanityFilter(array) {
@@ -80,6 +86,10 @@ function applySanityFilter(array) {
 
     return res;
 }
+
+function applyNightmareFilter(array) { return nightmare ? difficultyCheck(array, 2, 1) : array; }
+function applyInsanityFilter(array) { return insanity ? difficultyCheck(array, 1, 2) : array; }
+function applyDifficultyFilters(array) { return applyInsanityFilter(applyNightmareFilter(array)); }
 
 function difficultyCheck(third, max, off) {
     let count = countSelections();
@@ -195,7 +205,7 @@ function isPossible(evi) {
     
         }
     }
-
+    
     return found.length > 0;
 }
 
@@ -347,7 +357,7 @@ class Journal extends React.Component {
     keyDown(e) {
         if(e.shiftKey || e.ctrlKey) shifting = true;
 
-        let ghosts = possible.slice();
+        let ghosts = getPossibleGhosts().slice();
 
         initKeyValues(ghosts.length > 12 ? 2 : 1);
 
