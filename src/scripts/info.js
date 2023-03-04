@@ -1,9 +1,10 @@
-import { initInfoState, setSelected, selected, readInfo, handleKeyDown, stripURL } from "./utils.js";
+import { initInfoState, setSelected, selected, handleKeyDown, stripURL } from "./utils.js";
 import * as Utils from "./utils.js";
 import React from "react";
+import { info } from "./consts.js";
 
-const info = {};
-var array, dir, def;
+// const info = {};
+var array, def;
 
 class InfoButton extends React.Component {
     render() {
@@ -59,16 +60,8 @@ class Info extends React.Component {
         )
     }
 
-    async componentDidMount() {
-        let done = [];
-        for(let i = 0; i < array.length; i++) {
-            info[array[i]] = await readInfo(array[i].toLowerCase().replaceAll(" ", ""), dir);
-
-            done.push(true);
-
-            if(done.length === array.length) this.setState({selection: def});
-        };
-
+    componentDidMount() {
+        this.setState({selection: def});
         document.addEventListener("keydown", this.keyDown, false);
     }
     
@@ -89,9 +82,8 @@ class Info extends React.Component {
 
 export default Info
 
-export function initWith(arr, dr, param=dr, de=arr[0]) {   
+export function initWith(arr, param, de=arr[0]) {   
     array = arr;
-    dir = dr;
 
     initInfoState(arr, param, de);
 
