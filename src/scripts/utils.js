@@ -205,3 +205,11 @@ export function toUnSafeArray(arr) {
     for(let i = 0; i < array.length; i++) array[i] = toUnsafeString(array[i]);
     return array;
 }
+
+export function br(amount=1) {
+    let res = [];
+
+    for(let i = 0; i < amount; i++) res.push(<br key={i}/>);
+
+    return res;
+}
