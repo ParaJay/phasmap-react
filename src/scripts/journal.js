@@ -10,14 +10,14 @@ var possible, selected, nightmare, insanity;
 var updateCallback, evidenceCallback, exclusionCallback, labelCallback;
 const selections={}, exclusions={}, evidence={}, striked={}, sanity={}, permanentEvidence={}, autoExcluded=[], actionButtons=[], checks=[];
 
-function getPossibleGhosts() {
+function getPossibleGhosts(ret=3) {
     let evs = [], exc = [], first = [], second = [], third = [];
 
-    Object.keys(selections).forEach(e => {
-        if(exclusions[e]) {
+    Object.keys(evidenceMap).forEach(e => {
+        if(exclusions[e] === true) {
             exc.push(e);
         } else {
-            if(selections[e]) evs.push(e);
+            if(selections[e] === true) evs.push(e);
         }
     });
 
@@ -38,6 +38,8 @@ function getPossibleGhosts() {
         first = ghosts.slice();
     }
 
+    if(ret == 1) return first;
+
     if(exc.length > 0) {
         first.forEach(ghost => {
             let pass = true;
@@ -55,6 +57,8 @@ function getPossibleGhosts() {
     } else {
         second = first.slice();
     }
+
+    if(ret == 2) return second;
 
     second.forEach(ghost => {
         if(sanity[ghost] >= sani) third.push(ghost);
@@ -87,7 +91,7 @@ function difficultyCheck(third, max, off) {
 
                 if(count >= size - off) {                       
                     if(permanentEvidence[ghost]){
-                        let ps = selections[reverseCheck(permanentEvidence[ghost])];
+                        let ps = selections[reverseCheck(permanentEvidence[ghost])] === true;
 
                         if(!ps) rem.push(ghost);
                     }
@@ -113,7 +117,7 @@ function countSelections() {
     let count = 0;
     let keys = Object.keys(selections);
 
-    for(let i = 0; i < keys.length; i++) if(selections[keys[i]]) count++;
+    for(let i = 0; i < keys.length; i++) if(selections[keys[i]] === true) count++;
 
     return count;
 }
@@ -141,12 +145,7 @@ function l(t, k=t) { return <Label key={k} text={t}></Label>; }
 //TODO: fix for when selections.length == 7
 function updateExclusions() {
     let keys = Object.keys(evidenceMap);
-    // let selected = [];
-
-    // for(let i = 0; i < keys.length; i++) if(selections[keys[i]] === true) selected.push(keys[i]);
-
-    possible = getPossibleGhosts();
-
+    
     for(let i = 0; i < keys.length; i++) {
         if(!isPossible(keys[i])) {
             exclusions[keys[i]] = true;
@@ -164,7 +163,7 @@ function updateExclusions() {
 
 function isPossible(evi) {
     let found = [];
-    let ghosts = possible.slice();
+    let ghosts = getPossibleGhosts(1).slice();
 
     if(ghosts.length === 0 || ghosts[0] === "None") return true;
 
@@ -254,8 +253,6 @@ class Journal extends React.Component {
         this.keyUp = this.keyUp.bind(this);
         this.keyDown = this.keyDown.bind(this);
 
-        selections[Object.keys(evidenceMap)[0]] = false;
-
         initKeys(ghosts);
         stripURL();
         initInfo(this.preLoad.bind(this));
@@ -280,7 +277,7 @@ class Journal extends React.Component {
             return;
         }
 
-        let ghosts = possible.slice();
+        let ghosts = getPossibleGhosts().slice();
 
         let left = [], right = [], center = [];
 
@@ -402,15 +399,6 @@ class Journal extends React.Component {
         let id = e.target.id ? e.target.id : e.target.htmlFor;
 
         exclusions[id] = !exclusions[id];
-
-        let check = document.getElementById(id);
-        
-        if(check.checked === true || selections[check.id] === undefined || selections[check.id] === null) {
-            check.checked = !check.checked;
-
-            if(check.checked === true) selections[check.id] = true;
-            else delete selections[check.id];
-        }
 
         updateExclusions();
     }
