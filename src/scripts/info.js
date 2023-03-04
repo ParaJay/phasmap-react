@@ -23,8 +23,14 @@ class InfoHeader extends React.Component {
 }
 
 class Info extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.keyDown = this.keyDown.bind(this);
+        this.cb = this.handleSelectionChange.bind(this);
+    }
+
     state = {};
-    cb = this.handleSelectionChange.bind(this);
 
     render() {
         let left = [], right = [];
@@ -63,21 +69,17 @@ class Info extends React.Component {
             if(done.length === array.length) this.setState({selection: def});
         };
 
-        document.addEventListener("keydown", (e) => {
-            this.keyDown(e, () => this.setState({selection: selected}));
-        }, false);
+        document.addEventListener("keydown", this.keyDown, false);
     }
     
     componentWillUnmount(){
-        document.removeEventListener("keydown", (e) => {
-            this.keyDown(e, () => this.setState({selection: selected}));
-        }, false);
+        document.removeEventListener("keydown", this.keyDown, false);
     }
 
-    keyDown(e, cb) {
+    keyDown(e) {
         handleKeyDown(e, array);
 
-        cb();
+        this.setState({selection: selected})
     }
 
     handleSelectionChange() {
