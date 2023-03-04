@@ -105,8 +105,6 @@ export function handleKey(key, ret=false, sel=selected) {
 
     if(index === array.length) index = 0;
 
-    console.log(sel + "|" + array[index]);
-
     if(ret) {
         return array[index];
     } else {
