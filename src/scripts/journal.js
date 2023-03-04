@@ -181,7 +181,7 @@ function isPossible(evi) {
 
             if(found.includes(ghosts[i]) && count === evidence[ghosts[i]].length - (j + 1) && b) {
                 if(permanentEvidence[ghosts[i]]) {
-                    if(false === selections[reverseCheck(permanentEvidence[ghosts[i]])]) found.splice(found.indexOf(ghosts[i]), 1);
+                    if(selections[reverseCheck(permanentEvidence[ghosts[i]])] === false) found.splice(found.indexOf(ghosts[i]), 1);
                 } else {
                     if(!evidence[ghosts[i]].includes(evidenceMap[evi])) found.splice(found.indexOf(ghosts[i]), 1);
                 }
@@ -201,7 +201,7 @@ class CheckBox extends React.Component {
     render() { return this.check; }
 
     componentDidMount() {
-        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { evidenceCallback(e); }} onMouseUp={(e) => { if(e.button === 1) exclusionCallback(this.props.id); }} />);
+        this.check = (<input type="checkbox" id={this.props.id} className="evidence journal-check-box" value={this.props.value} onClick={(e) => { evidenceCallback(e); }} onMouseUp={(e) => { if(e.button === 1) exclusionCallback(e); }} />);
 
         if(!checks.includes(this.check.id)) checks.push(this.check.id);
     }
@@ -229,7 +229,7 @@ class CheckBoxLabel extends React.Component {
         if(exclusions[f]) text += " (NOT)";
 
         return <label className="journal-check-label" htmlFor={f} onMouseUp={(e) => {
-            if(e.button === 1 && evidenceMap[f]) exclusionCallback(f);
+            if(e.button === 1 && evidenceMap[f]) exclusionCallback(e);
         }}>{text}</label>;
     }
 }
@@ -398,8 +398,19 @@ class Journal extends React.Component {
         updateExclusions();
     }
 
-    onExclusionSwitch(id) {
+    onExclusionSwitch(e) {
+        let id = e.target.id ? e.target.id : e.target.htmlFor;
+
         exclusions[id] = !exclusions[id];
+
+        let check = document.getElementById(id);
+        
+        if(check.checked === true || selections[check.id] === undefined || selections[check.id] === null) {
+            check.checked = !check.checked;
+
+            if(check.checked === true) selections[check.id] = true;
+            else delete selections[check.id];
+        }
 
         updateExclusions();
     }
