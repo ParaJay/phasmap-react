@@ -1,23 +1,8 @@
 import React from "react";
-import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys } from "./utils.js";
-
-const ghosts = [
-    "Banshee", "Demon", "Deogen", "Goryo", "Hantu", "Jinn", "Mare", "Moroi", "Myling",
-    "Obake", "Oni", "Onryo", "Phantom", "Poltergeist", "Raiju", "Revenant", "Shade",
-    "Spirit", "Thaye", "The Mimic", "The Twins", "Wraith", "Yokai", "Yurei"
-];
+import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys, capitalize } from "./utils.js";
+import { ghosts, evidenceMap } from "./consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
-
-const checkVals = {
-    orbs: "Ghost Orbs",
-    fingerprints: "Fingerprints",
-    dots: "D.O.T.S",
-    freezing: "Freezing",
-    spiritBox: "Spirit Box",
-    emf: "EMF 5",
-    writing: "Ghost Writing"
-};
 
 var shifting = false;
 var sani = 0;
@@ -117,9 +102,9 @@ function difficultyCheck(third, max, off) {
 }
 
 function reverseCheck(checkFor) {
-    let keys = Object.keys(checkVals);
+    let keys = Object.keys(evidenceMap);
 
-    for(let i = 0; i < keys.length; i++) if(checkVals[keys[i]] === checkFor) return keys[i];
+    for(let i = 0; i < keys.length; i++) if(evidenceMap[keys[i]] === checkFor) return keys[i];
 
     return null;
 }
@@ -156,7 +141,7 @@ function reset() { window.location.reload(); }
 function l(t, k=t) { return <Label key={k} text={t}></Label>; }
 
 function updateExclusions() {
-    let keys = Object.keys(checkVals);
+    let keys = Object.keys(evidenceMap);
     let selected = [];
 
     for(let i = 0; i < keys.length; i++) if(selections[keys[i]]) selected.push(keys[i]);
@@ -187,7 +172,7 @@ function isPossible(evi) {
     let count = countSelections();
 
     for(let i = 0; i < ghosts.length; i++) {
-        if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(checkVals[evi])) found.push(ghosts[i]);
+        if(!found.includes(ghosts[i]) && evidence[ghosts[i]].includes(evidenceMap[evi])) found.push(ghosts[i]);
         if(found.includes(ghosts[i]) && striked[ghosts[i]]) found.splice(found.indexOf(ghosts[i]), 1);
 
         for(let j = 0; j < 2; j++) {
@@ -199,7 +184,7 @@ function isPossible(evi) {
                 if(permanentEvidence[ghosts[i]]) {
                     if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) found.splice(found.indexOf(ghosts[i]), 1);
                 } else {
-                    if(!evidence[ghosts[i]].includes(checkVals[evi])) found.splice(found.indexOf(ghosts[i]), 1);
+                    if(!evidence[ghosts[i]].includes(evidenceMap[evi])) found.splice(found.indexOf(ghosts[i]), 1);
                 }
             }
     
@@ -208,8 +193,6 @@ function isPossible(evi) {
 
     return found.length > 0;
 }
-
-function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
 class Slider extends React.Component {
     render() { return (<input id="slider" defaultValue="0" type="range" min="0" max="100" value={this.props.val} onInput={this.props.callback}/>) }
@@ -247,7 +230,7 @@ class CheckBoxLabel extends React.Component {
         if(exclusions[f]) text += " (NOT)";
 
         return <label className="journal-check-label" htmlFor={f} onMouseUp={(e) => {
-            if(e.button === 1 && checkVals[f]) exclusionCallback(f);
+            if(e.button === 1 && evidenceMap[f]) exclusionCallback(f);
         }}>{text}</label>;
     }
 }
@@ -261,10 +244,18 @@ class ActionButton extends React.Component {
 }
 
 class Journal extends React.Component {
-    render() {
-        if(!evidenceCallback) evidenceCallback = this.onEvidenceChange.bind(this);
-        if(!exclusionCallback) exclusionCallback = this.onExclusionSwitch.bind(this);
+    constructor(props) {
+        super(props);
 
+        updateCallback = this.forceUpdate.bind(this);
+        evidenceCallback = this.onEvidenceChange.bind(this);
+        exclusionCallback = this.onExclusionSwitch.bind(this);
+        labelCallback = this.onSelectionChange.bind(this);
+
+        this.keyUp = this.keyUp.bind(this);
+        this.keyDown = this.keyDown.bind(this);
+    }
+    render() {
         let ghosts = getPossibleGhosts();
 
         let left = [], right = [], center = [];
@@ -282,11 +273,11 @@ class Journal extends React.Component {
         this.checks = [];
         this.labels = [];
 
-        let keys = Object.keys(checkVals);
+        let keys = Object.keys(evidenceMap);
 
         for(let i = 0; i < keys.length; i++) {
             let key = keys[i];
-            let value = checkVals[key];
+            let value = evidenceMap[key];
             
             if(!value) value = capitalize(key);
 
@@ -357,20 +348,15 @@ class Journal extends React.Component {
         initKeys(ghosts);
         stripURL();
 
-        document.addEventListener("keydown", this.keyDown.bind(this), false);
-        document.addEventListener("keyup", (e) => this.keyUp(e, strike), false);
-        
-        updateCallback = this.forceUpdate.bind(this);
-        evidenceCallback = this.onEvidenceChange.bind(this);
-        exclusionCallback = this.onExclusionSwitch.bind(this);
-        labelCallback = this.onSelectionChange.bind(this);
+        document.addEventListener("keydown", this.keyDown, false);
+        document.addEventListener("keyup", (e) => this.keyUp, false);
 
         initInfo(this.forceUpdate.bind(this));
     }
     
     componentWillUnmount(){
-        document.removeEventListener("keydown", this.keyDown.bind(this), false);
-        document.removeEventListener("keyup", (e) => this.keyUp(e, strike), false);
+        document.removeEventListener("keydown", this.keyDown, false);
+        document.removeEventListener("keyup", (e) => this.keyUp, false);
     }
 
     onNightmareChange(e) {
