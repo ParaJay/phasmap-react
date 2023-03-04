@@ -2,6 +2,7 @@ import { initInfoState, setSelected, selected, handleKeyDown, stripURL } from ".
 import * as Utils from "./utils.js";
 import React from "react";
 import { info } from "./consts.js";
+import { Tooltip } from "react-tooltip";
 
 // const info = {};
 var array, def;
@@ -9,12 +10,19 @@ var array, def;
 class InfoButton extends React.Component {
     render() {
         let cn = selected === this.props.text ? "selectedButton" : "infoButton";
-
+        let text = this.props.text;
         return (
-            <button className={cn} id={this.props.text} onClick={() => {
-                setSelected(this.props.text);
-                this.props.callback();
-            }}>{this.props.text}</button>
+            <>
+                 <button className={cn} id={text} onClick={() => {
+                    setSelected(text);
+                    this.props.callback();
+                }}
+                data-tooltip-id={text}
+                // data-tooltip-html={info[text].replaceAll("\n", "<br/>")}
+                >{text}</button>
+
+                <Tooltip id={text} title="he"/>
+            </>
         )
     }
 }
