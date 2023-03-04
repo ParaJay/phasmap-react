@@ -1,11 +1,6 @@
 import React from "react";
 import {initWith} from "./info.js";
-
-const ghosts = [
-    "Banshee", "Demon", "Deogen", "Goryo", "Hantu", "Jinn", "Mare", "Moroi", "Myling",
-    "Obake", "Oni", "Onryo", "Phantom", "Poltergeist", "Raiju", "Revenant", "Shade",
-    "Spirit", "Thaye", "The Mimic", "The Twins", "Wraith", "Yokai", "Yurei"
-]
+import { ghosts } from "./consts.js";
 
 class Ghost extends React.Component {
     render() {
