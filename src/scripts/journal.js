@@ -138,11 +138,12 @@ function reset() { window.location.reload(); }
 
 function l(t, k=t) { return <Label key={k} text={t}></Label>; }
 
+//TODO: fix for when selections.length == 7
 function updateExclusions() {
     let keys = Object.keys(evidenceMap);
-    let selected = [];
+    // let selected = [];
 
-    for(let i = 0; i < keys.length; i++) if(selections[keys[i]]) selected.push(keys[i]);
+    // for(let i = 0; i < keys.length; i++) if(selections[keys[i]] === true) selected.push(keys[i]);
 
     possible = getPossibleGhosts();
 
@@ -180,7 +181,7 @@ function isPossible(evi) {
 
             if(found.includes(ghosts[i]) && count === evidence[ghosts[i]].length - (j + 1) && b) {
                 if(permanentEvidence[ghosts[i]]) {
-                    if(!selections[reverseCheck(permanentEvidence[ghosts[i]])]) found.splice(found.indexOf(ghosts[i]), 1);
+                    if(false === selections[reverseCheck(permanentEvidence[ghosts[i]])]) found.splice(found.indexOf(ghosts[i]), 1);
                 } else {
                     if(!evidence[ghosts[i]].includes(evidenceMap[evi])) found.splice(found.indexOf(ghosts[i]), 1);
                 }
@@ -253,7 +254,7 @@ class Journal extends React.Component {
         this.keyUp = this.keyUp.bind(this);
         this.keyDown = this.keyDown.bind(this);
 
-        Object.keys(evidenceMap).forEach(e => { selections[e] = false; });
+        selections[Object.keys(evidenceMap)[0]] = false;
 
         initKeys(ghosts);
         stripURL();
@@ -390,7 +391,8 @@ class Journal extends React.Component {
             exclusions[check.id] = !exclusions[check.id];
             check.checked = !check.checked;
         } else {
-            selections[check.id] = check.checked;
+            if(check.checked === true) selections[check.id] = true;
+            else delete selections[check.id];
         }
 
         updateExclusions();
