@@ -1,11 +1,7 @@
 import { handleKeyDown, initParams, def, initKeys, initKeyValues, setSelected, getNext, selected, stripURL } from "./utils.js";
 import React from "react";
 import {TransformWrapper, TransformComponent} from "react-zoom-pan-pinch"
-
-const maps = [
-    "bleasedale", "brownstone_high_school", "camp_woodwind", "edgefield", "grafton", "maple_lodge_campsite", "prison", 
-    "ridgeview", "sunny_meadows", "sunny_meadows_restricted", "tanglewood", "willow"
-]
+import { maps } from "./consts.js";
 
 function init() {
     initKeyValues(1);
@@ -34,6 +30,12 @@ class Button extends React.Component {
 
 class Map extends React.Component {
     state = {}
+
+    constructor(props) {
+        super(props);
+
+        this.onKeyDown = this.keyDown.bind(this);
+    }
 
     render() {
         if(!this.state.map) return;
@@ -68,11 +70,11 @@ class Map extends React.Component {
     handleMapChange() { this.setState({map: selected}); }
 
     keyDown(e, cb) {
-        let s = handleKeyDown(e, maps, true);
+        let s = handleKeyDown(e, maps, true, selected);
 
         if(s) select(s);
 
-        cb();
+        this.setState({map: selected})
     }
 
     componentDidMount(){
@@ -82,15 +84,11 @@ class Map extends React.Component {
 
         this.setState({map: selected});
 
-        document.addEventListener("keydown", (e) => {
-            this.keyDown(e, () => this.setState({map: selected}));
-        }, false);
+        document.addEventListener("keydown", this.onKeyDown, false);
     }
     
     componentWillUnmount(){
-        document.removeEventListener("keydown", (e) => {
-            this.keyDown(e, () => this.setState({map: selected}));
-        }, false);
+        document.removeEventListener("keydown", this.onKeyDown, false);
     }
 }
 
