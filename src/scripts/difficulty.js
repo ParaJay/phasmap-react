@@ -1,12 +1,9 @@
 import { initWith } from "./info.js";
 import React from "react";
-
-const difficulties = ["Amateur", "Intermediate", "Professional", "Nightmare", "Insanity"]
+import { difficulties } from "./consts.js";
 
 class Difficulty extends React.Component {
-    render() {
-        return initWith(difficulties, "difficulties", "difficulty");
-    }
+    render() { return initWith(difficulties, "difficulty"); }
 }
 
 export default Difficulty;
