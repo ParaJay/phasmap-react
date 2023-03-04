@@ -132,8 +132,6 @@ function strike() {
     striked[selected] = !striked[selected];
 
     updateExclusions();
-
-    updateCallback();
 }
 
 function reset() { window.location.reload(); }
@@ -149,7 +147,7 @@ function updateExclusions() {
     possible = getPossibleGhosts();
 
     for(let i = 0; i < keys.length; i++) {
-        if(!isPossible(keys[i], selected)) {
+        if(!isPossible(keys[i])) {
             exclusions[keys[i]] = true;
             autoExcluded.push(keys[i]);
         } else {
@@ -254,9 +252,34 @@ class Journal extends React.Component {
 
         this.keyUp = this.keyUp.bind(this);
         this.keyDown = this.keyDown.bind(this);
+
+        Object.keys(evidenceMap).forEach(e => { selections[e] = false; });
+
+        initKeys(ghosts);
+        stripURL();
+        initInfo(this.preLoad.bind(this));
     }
+
+    preLoad() {
+        this.loaded = false;
+        this.forceUpdate();
+    }
+
+    postLoad() {
+        if(!this.loaded) {
+            this.loaded = true;
+            setTimeout(() => updateExclusions(), 300);
+            return true;
+        }
+    }
+
     render() {
-        let ghosts = getPossibleGhosts();
+        if(!this.loaded) {
+            this.postLoad();
+            return;
+        }
+
+        let ghosts = possible.slice();
 
         let left = [], right = [], center = [];
 
@@ -321,14 +344,12 @@ class Journal extends React.Component {
 
     keyUp(e, cb) {
         if(!e.shiftKey && !e.ctrlKey) shifting = false;
-
+        
         if(e.key === " ") strike();
     }
 
     keyDown(e) {
         if(e.shiftKey || e.ctrlKey) shifting = true;
-
-        if(possible[0] === "None") possible = getPossibleGhosts();
 
         let ghosts = possible.slice();
 
@@ -343,20 +364,13 @@ class Journal extends React.Component {
     }
 
     componentDidMount() {
-        possible = getPossibleGhosts();
-
-        initKeys(ghosts);
-        stripURL();
-
         document.addEventListener("keydown", this.keyDown, false);
-        document.addEventListener("keyup", (e) => this.keyUp, false);
-
-        initInfo(this.forceUpdate.bind(this));
+        document.addEventListener("keyup", this.keyUp, false);
     }
     
     componentWillUnmount(){
         document.removeEventListener("keydown", this.keyDown, false);
-        document.removeEventListener("keyup", (e) => this.keyUp, false);
+        document.removeEventListener("keyup", this.keyUp, false);
     }
 
     onNightmareChange(e) {
@@ -385,7 +399,7 @@ class Journal extends React.Component {
     onExclusionSwitch(id) {
         exclusions[id] = !exclusions[id];
 
-        this.forceUpdate();
+        updateExclusions();
     }
 
     onSanityChange(e) {
