@@ -1,6 +1,6 @@
 import React from "react";
 import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys, capitalize } from "./utils.js";
-import { ghosts, evidenceMap } from "./consts.js";
+import { ghosts, evidenceMap, info } from "./consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
 
@@ -60,9 +60,7 @@ function getPossibleGhosts(ret=3) {
 
     if(ret == 2) return second;
 
-    second.forEach(ghost => {
-        if(sanity[ghost] >= sani) third.push(ghost);
-    });
+    third = applySanityFilter(second);
 
     if(nightmare) third = difficultyCheck(third, 2, 1);
     
@@ -71,6 +69,16 @@ function getPossibleGhosts(ret=3) {
     if(third.length === 0) third.push("None");
 
     return third;
+}
+
+function applySanityFilter(array) {
+    let res = [];
+
+    array.forEach(ghost => {
+        if(sanity[ghost] >= sani) res.push(ghost);
+    });
+
+    return res;
 }
 
 function difficultyCheck(third, max, off) {
@@ -142,10 +150,9 @@ function reset() { window.location.reload(); }
 
 function l(t, k=t) { return <Label key={k} text={t}></Label>; }
 
-//TODO: fix for when selections.length == 7
 function updateExclusions() {
     let keys = Object.keys(evidenceMap);
-    
+
     for(let i = 0; i < keys.length; i++) {
         if(!isPossible(keys[i])) {
             exclusions[keys[i]] = true;
@@ -163,7 +170,7 @@ function updateExclusions() {
 
 function isPossible(evi) {
     let found = [];
-    let ghosts = getPossibleGhosts(1).slice();
+    let ghosts = applySanityFilter(getPossibleGhosts(1)).slice();
 
     if(ghosts.length === 0 || ghosts[0] === "None") return true;
 
@@ -255,27 +262,18 @@ class Journal extends React.Component {
 
         initKeys(ghosts);
         stripURL();
-        initInfo(this.preLoad.bind(this));
+        initInfo(this);
+        this.preLoad();
     }
 
     preLoad() {
-        this.loaded = false;
-        this.forceUpdate();
-    }
+        if(!this.loaded || !this.mounted) setTimeout(() => this.preLoad(), 100);
 
-    postLoad() {
-        if(!this.loaded) {
-            this.loaded = true;
-            setTimeout(() => updateExclusions(), 300);
-            return true;
-        }
+        if(this.mounted) this.forceUpdate();
     }
 
     render() {
-        if(!this.loaded) {
-            this.postLoad();
-            return;
-        }
+        if(!this.loaded) return;
 
         let ghosts = getPossibleGhosts().slice();
 
@@ -362,6 +360,8 @@ class Journal extends React.Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
+
         document.addEventListener("keydown", this.keyDown, false);
         document.addEventListener("keyup", this.keyUp, false);
     }
@@ -414,38 +414,37 @@ class Journal extends React.Component {
     }
 }
 
-function initInfo(callback) {
-    for(let i = 0; i < ghosts.length; i++) {       
-        readInfo(ghosts[i], "ghosts").then(e => {
-            let lines = e.split("\n");
+function initInfo(inst) {
+    for(let i = 0; i < ghosts.length; i++) {      
+        let e = info[ghosts[i]]; 
+        let lines = e.split("\n");
 
-            for(let j = 0; j < lines.length; j++) {
-                let line = lines[j];
+        for(let j = 0; j < lines.length; j++) {
+            let line = lines[j];
 
-                if(line.includes("Evidence: ")) evidence[ghosts[i]] = line.split(": ")[1].split(", ");
+            if(line.includes("Evidence: ")) evidence[ghosts[i]] = line.split(": ")[1].split(", ");
 
-                if(line.includes("Always gives") && line.includes("evidence in Nightmare")) permanentEvidence[ghosts[i]] = line.split("gives ")[1].split(" evidence")[0];
+            if(line.includes("Always gives") && line.includes("evidence in Nightmare")) permanentEvidence[ghosts[i]] = line.split("gives ")[1].split(" evidence")[0];
 
-                if(line.includes("Hunts from: ")) {
-                    let split = line.split("Hunts from: ")[1].split(" ");
+            if(line.includes("Hunts from: ")) {
+                let split = line.split("Hunts from: ")[1].split(" ");
 
-                    let san = 0;
+                let san = 0;
 
-                    split.forEach(ee => {
-                        if(ee.includes("%")) {
-                            let si = parseInt(ee.replace("%", "").replace("(", ""));
+                split.forEach(ee => {
+                    if(ee.includes("%")) {
+                        let si = parseInt(ee.replace("%", "").replace("(", ""));
 
-                            if(si > san) san = si;
-                        }
-                    });
+                        if(si > san) san = si;
+                    }
+                });
 
-                    sanity[ghosts[i]] = san;
-
-                    if(Object.keys(sanity).length === ghosts.length) callback();
-                }
+                sanity[ghosts[i]] = san;
             }
-        });
+        }
     }
+
+    inst["loaded"] = true;
 }
 
 export default Journal;
