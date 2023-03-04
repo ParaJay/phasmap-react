@@ -1,14 +1,19 @@
 import React from "react";
-import { readInfo, stripURL, handleKeyDown, initKeyValues, initKeys, capitalize } from "./utils.js";
+import {  stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils.js";
 import { ghosts, evidenceMap, info } from "./consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
 
+//TODO: don't allow keybinds if slider is focused
+
+const br2 = br(2);
 var shifting = false;
 var sani = 0;
 var selected, nightmare, insanity;
 var updateCallback, evidenceCallback, exclusionCallback, labelCallback;
+const difficulties=["nightmare", "insanity"];
 const selections={}, exclusions={}, evidence={}, striked={}, sanity={}, permanentEvidence={}, autoExcluded=[], actionButtons=[], checks=[];
+const difficultyLabels = [];
 
 function getPossibleGhosts(ret=3) {
     let first = [], second = [], third = [];
@@ -42,9 +47,7 @@ function applySelectionFilter() {
                 if(!evi.includes(document.getElementById(e).value)) pass = false;
             });
 
-            if(pass && !res.includes(ghost)) {
-                res.push(ghost);
-            }
+            if(pass && !res.includes(ghost)) res.push(ghost);
         });
     } else {
         res = ghosts.slice();
@@ -77,16 +80,7 @@ function applyExclusionFilter(array, exc=Object.keys(evidenceMap).filter(e => ex
     return res;
 }
 
-function applySanityFilter(array) {
-    let res = [];
-
-    array.forEach(ghost => {
-        if(sanity[ghost] >= sani) res.push(ghost);
-    });
-
-    return res;
-}
-
+function applySanityFilter(array) { return array.filter(e => sanity[e] >= sani); }
 function applyNightmareFilter(array) { return nightmare ? difficultyCheck(array, 2, 1) : array; }
 function applyInsanityFilter(array) { return insanity ? difficultyCheck(array, 1, 2) : array; }
 function applyDifficultyFilters(array) { return applyInsanityFilter(applyNightmareFilter(array)); }
@@ -143,9 +137,7 @@ function countSelections() {
 function goto() {
     if(!selected) return;
 
-    let url = window.location.href.split("/")[0] + "?ghost=" + selected.replaceAll(" ", "%20") + "#/ghosts";
-
-    window.location.href = url;
+    window.location.href = window.location.href.split("/")[0] + "?ghost=" + selected.replaceAll(" ", "%20") + "#/ghosts";
 }
 
 function strike() {
@@ -234,7 +226,9 @@ class Label extends React.Component {
 
         if(cn.endsWith("-")) cn += text.endsWith("_") ? "blank" : "label";
 
-        return (<p value={this.props.text} onClick={labelCallback} className={cn}>{this.props.text}</p>)
+        return (
+            <p value={this.props.text} onClick={labelCallback} className={cn}>{this.props.text}</p>
+        )
     }
 }
 
@@ -262,6 +256,11 @@ class Journal extends React.Component {
     constructor(props) {
         super(props);
 
+        this.difficultyChecks = [
+            <input type="checkbox" key="n" id={"nightmare"} onChange={this.onNightmareChange.bind(this)}></input>,
+            <input type="checkbox" key="i" id={"insanity"} onChange={this.onInsanityChange.bind(this)}></input>
+        ];
+
         updateCallback = this.forceUpdate.bind(this);
         evidenceCallback = this.onEvidenceChange.bind(this);
         exclusionCallback = this.onExclusionSwitch.bind(this);
@@ -279,7 +278,7 @@ class Journal extends React.Component {
     preLoad() {
         if(!this.loaded || !this.mounted) setTimeout(() => this.preLoad(), 100);
 
-        if(this.mounted) this.forceUpdate();
+        if(this.loaded && this.mounted) this.forceUpdate();
     }
 
     render() {
@@ -326,21 +325,19 @@ class Journal extends React.Component {
 
                 <div className="btns-left">
                     {this.checks}
-                    <br/><br/>
+                    {br2}
                     <label htmlFor="slider" id="sliderLabel">Sanity: {sani}%</label>
-                    <br/><br/>
-                    <input type="checkbox" id={"nightmare"} value={this.props.value} onChange={this.onNightmareChange.bind(this)}></input>
-                    <input type="checkbox" id={"insanity"} value={this.props.value} onChange={this.onInsanityChange.bind(this)}></input>
+                    {br2}
+                    {this.difficultyChecks}
                                 
                 </div>
                 
                 <div className="btns-right">
                     {this.labels}
-                    <br/><br/>
+                    {br2}
                     <Slider callback={this.onSanityChange.bind(this)}/>
-                    <br/><br/>
-                    <CheckBoxLabel htmlFor="nightmare" text="Nightmare?"></CheckBoxLabel>
-                    <CheckBoxLabel htmlFor="insanity" text="Insanity?"></CheckBoxLabel>
+                    {br2}
+                    {difficultyLabels}
                     <br/>
                     {actionButtons}
                 </div>           
@@ -462,3 +459,4 @@ export default Journal;
 let actionKeys = Object.keys(actions);
 
 for(let i = 0; i < actionKeys.length; i++) actionButtons.push(<ActionButton key={"act" + i} action={actionKeys[i]}/>)
+for(let i = 0; i < difficulties.length; i++) difficultyLabels.push(<CheckBoxLabel key={i} htmlFor={difficulties[i]} text={capitalize(difficulties[i] + "?")}></CheckBoxLabel>)
