@@ -34,7 +34,7 @@ class Map extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onKeyDown = this.keyDown.bind(this);
+        this.keyDown = this.keyDown.bind(this);
     }
 
     render() {
@@ -69,7 +69,7 @@ class Map extends React.Component {
 
     handleMapChange() { this.setState({map: selected}); }
 
-    keyDown(e, cb) {
+    keyDown(e) {
         let s = handleKeyDown(e, maps, true, selected);
 
         if(s) select(s);
@@ -84,11 +84,11 @@ class Map extends React.Component {
 
         this.setState({map: selected});
 
-        document.addEventListener("keydown", this.onKeyDown, false);
+        document.addEventListener("keydown", this.keyDown, false);
     }
     
     componentWillUnmount(){
-        document.removeEventListener("keydown", this.onKeyDown, false);
+        document.removeEventListener("keydown", this.keyDown, false);
     }
 }
 
