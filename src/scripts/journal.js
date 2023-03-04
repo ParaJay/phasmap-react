@@ -1,5 +1,6 @@
 import React from "react";
-import {  stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils.js";
+import { Tooltip } from "react-tooltip";
+import { stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils.js";
 import { ghosts, evidenceMap, info } from "./consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
@@ -227,7 +228,10 @@ class Label extends React.Component {
         if(cn.endsWith("-")) cn += text.endsWith("_") ? "blank" : "label";
 
         return (
-            <p value={this.props.text} onClick={labelCallback} className={cn}>{this.props.text}</p>
+            <>
+                <p id={this.props.text} value={this.props.text} onClick={labelCallback} className={cn} data-tooltip-id={this.props.text} data-tooltip-content={evidence[text].toString().replaceAll(",", ", ")}>{this.props.text}</p>
+                <Tooltip arrow text="emem" id={this.props.text}/>
+            </>
         )
     }
 }
