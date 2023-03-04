@@ -159,9 +159,7 @@ export function capitalizeAll(string, seperator=" ") {
     let split = string.split(seperator);
     let res = "";
 
-    for(let i = 0; i < split.length; i++) {
-        res += (res.length == 0 ? "" : seperator) + capitalize(split[i]);
-    }
+    for(let i = 0; i < split.length; i++) res += (res.length == 0 ? "" : seperator) + capitalize(split[i]);
 
     return res;
 }
@@ -184,11 +182,7 @@ export function capitalizeArrayToString(array, start=0, seperator="") {
 
 export function capitalizeInArray(arr, start=0, end=arr.length, seperator="") {
     let array = arr.slice();
-
-    for(let i = start; i < end; i++) {
-        array[i] = capitalizeAll(array[i], seperator);
-    }
-
+    for(let i = start; i < end; i++) array[i] = capitalizeAll(array[i], seperator);
     return array;
 }
 
