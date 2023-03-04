@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-const keys = {};
+var keys = {};
 
 export var selected, info, def, kval;
 
@@ -8,7 +8,7 @@ export function initKeyValues(kvalMax=2) { kval = {ArrowUp:-kvalMax, ArrowDown:k
 
 export function setSelected(sel) { selected = sel; }
 
-export async function initInfoState(array, param, def=array[0]) {
+export function initInfoState(array, param, def=array[0]) {
     initKeyValues(2);
 
     initKeys(array);
@@ -37,14 +37,18 @@ export function selectDef() { select(def); }
 export function initAll(array) { initKeys(array); }
 
 export function initKeys(array) {
-    array.forEach(item => {
+    keys = {};
+
+    for(let i = 0; i < array.length; i++) {
+        let item = array[i];
+
         let split = item.replaceAll("_", " ").split(" ");
         let val = [];
 
         split.forEach(e => val.push(e.charAt(0).toUpperCase()));
 
         keys[item] = val;
-    });
+    }
 }
 
 export function setInfo(i) { info = i; }
@@ -97,9 +101,11 @@ export function handleKey(key, ret=false, sel=selected) {
         return;
     }
 
-    let index = sel ? array.indexOf(sel) + 1 : 0;
+    let index = array.indexOf(sel) + 1;
 
     if(index === array.length) index = 0;
+
+    console.log(sel + "|" + array[index]);
 
     if(ret) {
         return array[index];
@@ -143,4 +149,67 @@ export function stripURL() {
 
         window.location = href.replace(params, "");
     }
+}
+
+export function capitalize(string) {
+    return (string.charAt(0).toUpperCase() + string.slice(1));
+}
+
+export function capitalizeAll(string, seperator=" ") {
+    if(!string.includes(seperator)) return capitalize(string);
+
+    let split = string.split(seperator);
+    let res = "";
+
+    for(let i = 0; i < split.length; i++) {
+        res += (res.length == 0 ? "" : seperator) + capitalize(split[i]);
+    }
+
+    return res;
+}
+
+export function capitalizeArrayToString(array, start=0, seperator="") {
+    let result = "";
+
+    if(start != 0) result = array.slice(0, start).toString().replaceAll(",", seperator);
+
+    for(let i = start; i < array.length; i++) {
+        let e = array[i];
+
+        if(result.length > 0) result += seperator;
+
+        result += capitalize(e);
+    }
+
+    return result;
+}
+
+export function capitalizeInArray(arr, start=0, end=arr.length, seperator="") {
+    let array = arr.slice();
+
+    for(let i = start; i < end; i++) {
+        array[i] = capitalizeAll(array[i], seperator);
+    }
+
+    return array;
+}
+
+export function toSafeString(str) {
+    return str.toLowerCase().replaceAll(" ", "_");
+}
+
+export function toUnsafeString(str) {
+    return capitalizeArrayToString(str.replaceAll("_", " ").split(" "), 0, " ");
+}
+
+export function toSafeArray(arr) {
+    let array = arr.slice();
+    for(let i = 0; i < array.length; i++) array[i] = toSafeString(array[i]);
+    return array;
+}
+
+export function toUnSafeArray(arr) {
+    let array = arr.slice();
+    for(let i = 0; i < array.length; i++) array[i] = toUnsafeString(array[i]);
+    return array;
 }
