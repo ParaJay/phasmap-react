@@ -3,6 +3,7 @@ import * as Utils from "./utils.js";
 import React from "react";
 import { info } from "./consts.js";
 import { Tooltip } from "react-tooltip";
+import { InfoHeader } from "./consts";
 
 // const info = {};
 var array, def;
@@ -27,10 +28,6 @@ class InfoButton extends React.Component {
     }
 }
 
-class InfoHeader extends React.Component {
-    render() { return (<p id="infoHeader">{this.props.text}</p>) }
-}
-
 class Info extends React.Component {
     constructor(props) {
         super(props);
@@ -47,11 +44,11 @@ class Info extends React.Component {
         for(let i = 0; i < array.length; i++) (i % 2 === 0 ? left : right).push(<InfoButton key={array[i]} text={array[i]} callback={this.cb}></InfoButton>)
 
         return (
-            <div id="main-wrapper">       
+            <div className="wrapper">       
                 <div className="wrapper">
                     <div className="info-wrapper">
                         <InfoHeader text={this.state.selection}></InfoHeader>
-                        <textarea id="text" cols="96" rows="32" readOnly={true} value={info[this.state.selection]}></textarea>
+                        <textarea id="text" cols="108" rows="32" readOnly={true} value={info[this.state.selection]}></textarea>
                     </div>
 
                     <div className="btns-left">
