@@ -21,11 +21,11 @@ function getPossibleGhosts(ret=3) {
 
     first = applySelectionFilter();
 
-    if(ret == 1) return first;
+    if(ret === 1) return first;
 
     second = applyExclusionFilter(first);
 
-    if(ret == 2) return second;
+    if(ret === 2) return second;
 
     third = applySanityFilter(second);
     third = applyDifficultyFilters(third);

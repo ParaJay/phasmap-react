@@ -149,9 +149,7 @@ export function stripURL() {
     }
 }
 
-export function capitalize(string) {
-    return (string.charAt(0).toUpperCase() + string.slice(1));
-}
+export function capitalize(string) { return (string.charAt(0).toUpperCase() + string.slice(1)); }
 
 export function capitalizeAll(string, seperator=" ") {
     if(!string.includes(seperator)) return capitalize(string);
@@ -159,7 +157,7 @@ export function capitalizeAll(string, seperator=" ") {
     let split = string.split(seperator);
     let res = "";
 
-    for(let i = 0; i < split.length; i++) res += (res.length == 0 ? "" : seperator) + capitalize(split[i]);
+    for(let i = 0; i < split.length; i++) res += (res.length === 0 ? "" : seperator) + capitalize(split[i]);
 
     return res;
 }
@@ -167,7 +165,7 @@ export function capitalizeAll(string, seperator=" ") {
 export function capitalizeArrayToString(array, start=0, seperator="") {
     let result = "";
 
-    if(start != 0) result = array.slice(0, start).toString().replaceAll(",", seperator);
+    if(start !== 0) result = array.slice(0, start).toString().replaceAll(",", seperator);
 
     for(let i = start; i < array.length; i++) {
         let e = array[i];
