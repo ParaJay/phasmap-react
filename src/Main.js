@@ -6,6 +6,8 @@ import CursedItem from './scripts/cursed-items';
 import Equipment from './scripts/equipment';
 import Journal from './scripts/journal';
 import Difficulty from './scripts/difficulty';
+import PhotoRandomizer from './scripts/photo-randomizer';
+import PhotoRewards from './scripts/PhotoRewards';
 
 const Main = () => {
   return (
@@ -17,6 +19,8 @@ const Main = () => {
       <Route exact path='/phasmap-react/equipment' element={<Equipment/>}></Route>
       <Route exact path='/phasmap-react/journal' element={<Journal/>}></Route>
       <Route exact path='/phasmap-react/difficulty' element={<Difficulty/>}></Route>
+      <Route exact path='/phasmap-react/photorandomizer' element={<PhotoRandomizer/>}></Route>
+      <Route exact path='/phasmap-react/photorewards' element={<PhotoRewards/>}></Route>
 
       <Route exact path='/' element={<Maps/>}></Route>
       <Route exact path='/index' element={<Maps/>}></Route>
@@ -25,6 +29,8 @@ const Main = () => {
       <Route exact path='/equipment' element={<Equipment/>}></Route>
       <Route exact path='/journal' element={<Journal/>}></Route>
       <Route exact path='/difficulty' element={<Difficulty/>}></Route>
+      <Route exact path='/photorandomizer' element={<PhotoRandomizer/>}></Route>
+      <Route exact path='/photorewards' element={<PhotoRewards/>}></Route>
     </Routes>
   );
 }

@@ -4,7 +4,7 @@ import {unsafe_maps} from "./scripts/consts";
 
 const maps = unsafe_maps;
 
-const pages = ["Ghosts", "Index", "Journal", "Cursed Items", "Equipment", "Difficulty"]
+const pages = ["Ghosts", "Index", "Journal", "Cursed Items", "Equipment", "Difficulty", "Photo Randomizer", "Photo Rewards"]
 
 const names = {"Index" : "Maps"};
 

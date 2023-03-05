@@ -31,12 +31,12 @@
     text-align: center;
 }
 
-.jleft, .jright, .jcenter {
+.jleft, .jright, .jcenter, .jtop, .tbottom {
     padding: 0px 60px;
     /* position: relative; */
 }
 
-.btns-left, .btns-right, .jleft, .jright, .jcenter {
+.btns-left, .btns-right, .jleft, .jright, .jcenter, .jtop, .tbottom, .photo-rando-right {
     display: flex;
     flex-direction: column;
 }
@@ -60,6 +60,12 @@ input {
 
 button, label {
     margin: 6px 6px;
+}
+
+.photo-rando-item {
+    height: 4.3vh;
+    text-align: center;
+    /* margin: 3px 16; */
 }
 
 input {
@@ -121,12 +127,20 @@ button, box {
     color: orange;
 }
 
-.journal-defs {
+.phas-label, .journal-defs, .photo-rando-label, .separator {
     font-size: 24px;
-    font-family: "October Crow";
     text-align: center;
+    color: rgb(128, 128, 128);
     padding: 4px 4px;
     margin: 5px;
+}
+
+.photo-rando-label {
+    font-size: 20px;
+}
+
+.journal-defs {
+    font-family: "October Crow";
 }
 
 .journal-check-box {
@@ -149,16 +163,37 @@ button, box {
     text-decoration: none;
 }
 
-.journal-striked {
+.journal-striked, .disabled {
     color: rgb(128, 128, 128);
     text-decoration: line-through;
 }
 
 .journal-blank {
     color: rgb(60, 63, 65);
+    text-decoration: none;
+    background-color: rgb(60, 63, 65);
+    border: none;
 }
 
 .journal-wrapper {
     display: flex;
     justify-content: center;
+}
+
+.photo-rando-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.photo-rando-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.text-area {
+    width: 100vh;
+    height: 70vh;
 }

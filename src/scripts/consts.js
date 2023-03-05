@@ -1,4 +1,6 @@
 import { readInfo, toUnSafeArray } from "./utils";
+import React from "react";
+import { Tooltip } from "react-tooltip";
 
 var expected = 0;
 var processed = 0;
@@ -34,6 +36,10 @@ export const equipment = [
 export const cursedItems = ["Haunted Mirror", "Monkey Paw", "Music Box", "Ouija Board", "Summoning Circle", "Tarot Cards", "Voodoo Doll"];
 export const difficulties = ["Amateur", "Intermediate", "Professional", "Nightmare", "Insanity"];
 
+export const photoRewards = [
+    "Ghost", "Cursed Item", "Fingerprint", "Footprints", "Interaction", "Dead Body", "Ghost Writing", "Salt Pile", "DOTS", "Bone", "Dirty Water", "Used Crucifix"
+];
+
 export const info = {};
 
 export function initInfo() {
@@ -45,6 +51,7 @@ export function initInfo() {
     loadAll(equipment, "equipment");
     loadAll(cursedItems, "cursed-items");
     loadAll(difficulties, "difficulties");
+    parse("photorewards", "photorewards");
 }
 
 function loadAll(array, dir) { array.forEach(e => loadInfo(e, dir)); }
@@ -56,8 +63,170 @@ function loadInfo(el, dir) {
     });
 }
 
+function isDeclaration(line) {
+    return line.match(/@dec [a-zA-Z]* = \([0-9]*, [0-9]*, [0-9]*\)/g);
+}
+
+function isSetInfo(line) {
+    return line.match(/setInfo \"[a-zA-Z ]*\" [a-zA-Z]*/g);
+}
+
+function isSetMult(line) {
+    return line.match(/setMult [a-zA-Z] [\"[a-zA-Z ]*\"]*/g);
+}
+
+function parse(el, dir) {
+    expected += 1;
+    readInfo(el.toLowerCase().replaceAll(" ", ""), dir).then(e => {
+        console.log(e);
+        let lines = e.replaceAll("\r", "\n").replaceAll("\n\n", "\n").split("\n");
+        let olines = lines.slice();
+        let decs = {};
+        console.log(lines.length);
+
+        for(let i = 0; i < olines.length; i++) {
+            let line = olines[i];
+
+            console.log(i + ": " + line);
+            
+            if(isDeclaration(line)) {
+                console.log("isdec: " + line);
+                let split = line.split(" = \(");
+                let pre = split[0].split("@dec ")[1];
+                let value = split[1].replace("\)", "").split(", ");
+
+                if(value.length > 1) {
+                    for(let j = 0; j < value.length; j++) {
+                        let v = value[j];
+
+                        let tryInt = parseFloat(v);
+
+                        if(Number.isNaN(tryInt)) {
+                            v = v.toString();
+                        } else {
+                            v = tryInt;
+                        }
+
+                        value[j] = v;
+                    }
+                } else {
+                    let tryInt = parseFloat(value);
+
+                    if(Number.isNaN(tryInt)) {
+                        value = value.toString();
+                    } else {
+                        value = tryInt;
+                    }
+                }
+
+                decs[pre] = value;
+
+                lines.splice(lines.indexOf(line), 1);
+            }else {
+                console.log("notdec: " + line);
+            }
+        }
+
+        console.log(lines);
+
+        for(let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+
+            if(!line) continue;
+
+            if(isSetInfo(line)) {
+                line = line.replace("setInfo ", "");
+                let split = line.split("\"");
+
+                let key = split[1].trim();
+                let value = split[2].trim();
+
+                console.log(key + "|" + value);
+
+                console.log(decs);
+
+                if(decs[value]) {
+                    value = decs[value];
+                }
+
+                info[key] = value;
+                // console.log("set: " + key + ": to: " + value);
+            }
+
+            if(isSetMult(line)) {
+                // console.log("isSetMult");
+                line = line.replace("setMult ", "");
+
+                let split = line.split("\"");
+
+                let key;
+                let def = split[0].trim();
+                // console.log("key: " + key);
+                // console.log("split");
+                // console.log(split);
+
+                for(let j = 1; j < split.length; j++) {
+                    // console.log("i: " + i + ": " + split[j]);
+                    key = split[j].trim();
+
+                    // console.log("val: " + value);
+
+                    if(!key) continue;
+    
+                    if(decs[def]) {
+                        def = decs[def];
+                    }
+    
+                    let values = key.split("\" ");
+        
+                    for(let k = 0; k < values.length; k++) {
+                        let v = values[k];
+                        let trimmed = v.replaceAll("\"", "").trim();
+    
+                        if(trimmed) {
+                            key = trimmed;
+
+                            info[key] = def;
+                        }
+                    }
+
+                    // console.log("value: " + def);
+    
+                    // info[key] = def;
+                    // console.log("set: " + key + ": to: " + def);
+                }              
+            }
+        }
+
+        processed++;
+    });
+}
+
 function clearInfo() { Object.keys(info).forEach(e => delete info[e]); }
 
 export function isLoading() { return expected > processed; }
 
 export function getProgress() { return processed + "/" + expected; }
+
+export class InfoHeader extends React.Component {
+    render() { return (<p id="infoHeader">{this.props.text}</p>) }
+}
+
+export class PhasLabel extends React.Component {
+    render() {
+        let text = this.props.text;
+        
+        return (
+            <>
+                <p className={this.props.className} id={text} value={text} data-tooltip-id={text} data-tooltip-content={this.props.tooltip} onClick={this.props.onClick}>{text}</p>
+                <Tooltip arrow text="emem" id={text}/>
+            </>
+        )
+    }
+}
+
+export class Separator extends React.Component {
+    render() {
+        return <p className="separator">====================================</p>
+    }
+}
