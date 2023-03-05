@@ -2,6 +2,7 @@ import React from "react";
 import { Tooltip } from "react-tooltip";
 import { stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils.js";
 import { ghosts, evidenceMap, info } from "./consts.js";
+import { PhasLabel } from "./consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
 
@@ -151,7 +152,7 @@ function strike() {
 
 function reset() { window.location.reload(); }
 
-function l(t, k=t) { return <Label key={k} text={t}></Label>; }
+function l(t, k=t) { return <JournalLabel key={k} text={t}></JournalLabel>; }
 
 function updateExclusions() {
     let keys = Object.keys(evidenceMap);
@@ -216,7 +217,7 @@ class CheckBox extends React.Component {
     }
 }
 
-class Label extends React.Component {
+export class JournalLabel extends React.Component {
     render() {
         let text = this.props.text;
         let cn = "journal-defs journal-";
@@ -227,11 +228,12 @@ class Label extends React.Component {
 
         if(cn.endsWith("-")) cn += text.endsWith("_") ? "blank" : "label";
 
+        let tip = "";
+
+        if(evidence[text]) tip = evidence[text].toString().replaceAll(",", ", ")
+
         return (
-            <>
-                <p id={this.props.text} value={this.props.text} onClick={labelCallback} className={cn} data-tooltip-id={this.props.text} data-tooltip-content={evidence[text].toString().replaceAll(",", ", ")}>{this.props.text}</p>
-                <Tooltip arrow text="emem" id={this.props.text}/>
-            </>
+            <PhasLabel onClick={this.props.onClick} text={this.props.text} className={cn} tooltip={tip}></PhasLabel>
         )
     }
 }
