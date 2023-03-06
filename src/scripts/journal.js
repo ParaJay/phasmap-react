@@ -150,7 +150,7 @@ function strike() {
 
 function reset() { window.location.reload(); }
 
-function l(t, k=t) { return <JournalLabel key={k} text={t}></JournalLabel>; }
+function l(t, k=t) { return <JournalLabel onClick={labelCallback} key={k} text={t}></JournalLabel>; }
 
 function updateExclusions() {
     let keys = Object.keys(evidenceMap);
