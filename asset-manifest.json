@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/phasmap-react/static/css/main.332b1bb8.css",
-    "main.js": "/phasmap-react/static/js/main.cc2c7992.js",
+    "main.css": "/phasmap-react/static/css/main.3ee6fb4f.css",
+    "main.js": "/phasmap-react/static/js/main.6c9ce649.js",
     "static/js/787.bc7d429a.chunk.js": "/phasmap-react/static/js/787.bc7d429a.chunk.js",
     "static/media/sunny_meadows_restricted.png": "/phasmap-react/static/media/sunny_meadows_restricted.efb10ab0be28ae0c8398.png",
     "static/media/brownstone_high_school.png": "/phasmap-react/static/media/brownstone_high_school.27945efb956b34f6e764.png",
@@ -77,12 +77,12 @@
     "static/media/lighter.txt": "/phasmap-react/static/media/lighter.ace3f5f905f489c2a2d5.txt",
     "static/media/salt.txt": "/phasmap-react/static/media/salt.f89d962985d2c5e33607.txt",
     "static/media/tripod.txt": "/phasmap-react/static/media/tripod.2811a40d78de8893474f.txt",
-    "main.332b1bb8.css.map": "/phasmap-react/static/css/main.332b1bb8.css.map",
-    "main.cc2c7992.js.map": "/phasmap-react/static/js/main.cc2c7992.js.map",
+    "main.3ee6fb4f.css.map": "/phasmap-react/static/css/main.3ee6fb4f.css.map",
+    "main.6c9ce649.js.map": "/phasmap-react/static/js/main.6c9ce649.js.map",
     "787.bc7d429a.chunk.js.map": "/phasmap-react/static/js/787.bc7d429a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.332b1bb8.css",
-    "static/js/main.cc2c7992.js"
+    "static/css/main.3ee6fb4f.css",
+    "static/js/main.6c9ce649.js"
   ]
 }
