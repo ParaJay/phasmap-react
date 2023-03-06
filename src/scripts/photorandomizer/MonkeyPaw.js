@@ -3,7 +3,6 @@ import Random from "../random";
 import { costMult, currentEquipment, points, randomItem, setPoints, updateCallback, remaining, starMult, difficulty, setRemaining, setStarMult, difficulties } from "./PhotoRandomizer";
 import { incrementTarot, setFoolChance } from "./TarotCards";
 
-const wishes = ["points", "cheaper items", "tarot", "item", "photo"];
 var wishesRemaining;
 
 class MonkeyPawButton extends React.Component {
@@ -76,7 +75,7 @@ function useWish(wish) {
         randomItem(true);
 
         currentEquipment.splice(new Random().intFromArray(currentEquipment), 1, "...");
-    } else if(wish == "photo") {
+    } else if(wish === "photo") {
         setRemaining(remaining + 1);
 
         if(new Random().nextInt(100) < 40) {

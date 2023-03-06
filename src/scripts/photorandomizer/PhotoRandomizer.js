@@ -21,7 +21,7 @@ function trimAvailable(array) {
     for(let i = 0; i < array.length; i++) {
         let e = array[i];
 
-        if(e == "Photo Camera" || e == "Weak Torch" || e == "Lighter") array.splice(i, 1);
+        if(e === "Photo Camera" || e === "Weak Torch" || e === "Lighter") array.splice(i, 1);
     }
 
     return array;
@@ -29,9 +29,9 @@ function trimAvailable(array) {
 
 export function randomItem(free=false) {
     free = free === true;
-    if(currentEquipment.length == usables.length) return;
+    if(currentEquipment.length === usables.length) return;
 
-    if(difficulty == "Hard") {
+    if(difficulty === "Hard") {
         if(points < 5 * costMult && !free) return;
         else if(!free) points -= (5 * costMult);
     }
@@ -65,7 +65,7 @@ function getPoints() {
 
 function getDifficultyExtras() {
     let center = [];
-    if(difficulty == "Hard") {
+    if(difficulty === "Hard") {
         center.push(<p className="phas-label" key="c2">{"Photos Remaining: " + remaining}</p>)
         center.push(<Separator key="c1"/>);
     }
@@ -128,11 +128,11 @@ class PhotoRandoHard extends React.Component {
         left.push(<button className="journal-blank photo-rando-slider-b" key={"lbe"}>av</button>);
         right.push(<button className="journal-blank photo-rando-slider-b" key={"rbe"}>av</button>);
 
-        for(let i = 0; i < photoRewards.length; i++) (i % 2 == 0 ? left : right).push(<button onClick={onPhotoReward} className={"photo-rando-item"} key={i}>{photoRewards[i]}</button>)
+        for(let i = 0; i < photoRewards.length; i++) (i % 2 === 0 ? left : right).push(<button onClick={onPhotoReward} className={"photo-rando-item"} key={i}>{photoRewards[i]}</button>)
 
         for(let i = 0; i < 6; i++) {
-            if(i == 1 || i == 4) oleft.push(<p className="photo-rando-item journal-blank" key={i + "be"}>ab</p>);
-            else if(i == 2 || i == 5) oleft.push(<button className="journal-blank photo-rando-slider-b" key={i + "be"}>av</button>);
+            if(i === 1 || i === 4) oleft.push(<p className="photo-rando-item journal-blank" key={i + "be"}>ab</p>);
+            else if(i === 2 || i === 5) oleft.push(<button className="journal-blank photo-rando-slider-b" key={i + "be"}>av</button>);
             else oleft.push(<button className="photo-rando-item journal-blank invis" key={i + "vg"}>vg</button>);
         }
 
@@ -191,11 +191,11 @@ class PhotoRandomizer extends React.Component {
         let str = "";
 
         for(let i = 0; i < currentEquipment.length; i++) {
-            if(i !== 0 && i % 3 == 0) {
+            if(i !== 0 && i % 3 === 0) {
                 center.push(<PhotoRandoLabel key={i + "-x"} text={str}/>);
                 str="";
             }
-            str += (str.length == 0 ? "" : ", ") + currentEquipment[i];
+            str += (str.length === 0 ? "" : ", ") + currentEquipment[i];
         }
     
         if(str) center.push(<PhotoRandoLabel key={"g-x"} text={str}/>);

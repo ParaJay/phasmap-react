@@ -20,7 +20,6 @@ export default class PhotoRewards extends React.Component {
         let text = "";
 
         let keys = Object.keys(this.groups);
-        let ps = [];
 
         for(let i = 0; i < keys.length; i++) {
             let key = this.groups[keys[i]];

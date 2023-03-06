@@ -89,7 +89,7 @@ export function drawTarot() {
         let operation;
         let value;
 
-        if(tokens.length == 2) {
+        if(tokens.length === 2) {
             operation = tokens[0];
             value = tokens[1];
         }
@@ -97,7 +97,7 @@ export function drawTarot() {
         console.log("action: " + action);
 
         if(action === "Points") {
-            if(tokens.length == 2) {
+            if(tokens.length === 2) {
                 let pointsChange;
                 let tryNum = parseFloat(value);
 
@@ -141,7 +141,7 @@ export function drawTarot() {
                     value = value.replace("%", "");
                     tryNum = parseFloat(value);
 
-                    if(value == "x") {
+                    if(value === "x") {
                         costChange = (cmult / 100) * pointDiff;
                     } else if(!Number.isNaN(tryNum)) {
                         costChange = (cmult / 100) * tryNum;
@@ -159,15 +159,15 @@ export function drawTarot() {
                     
                 }
             }
-        } else if(action == "Item") {
-            if(tokens.length == 0 ||  tokens[0] == "+") {
+        } else if(action === "Item") {
+            if(tokens.length === 0 ||  tokens[0] === "+") {
                 randomItem(true);
                 resText += (resText.length === 0 ? "" : ", ") + "Free Item";
-            } else if(tokens[0] == "-") {
+            } else if(tokens[0] === "-") {
                 currentEquipment.splice(new Random().intFromArray(currentEquipment), 1);
                 resText += (resText.length === 0 ? "" : ", ") + "Lose an Item";
             }
-        } else if(action == "Fool") {
+        } else if(action === "Fool") {
             fool = true;
             resText += (resText.length === 0 ? "" : ", ") + "Cause Fool Next Time";
 
@@ -188,15 +188,15 @@ export function drawTarot() {
 }
 
 function calc(a, b, op) {
-    if(op == "+") {
+    if(op === "+") {
         a += b;
-    } else if(op == "-") {
+    } else if(op === "-") {
         a -= b;
-    } else if(op == "*") {
+    } else if(op === "*") {
         a *= b;
-    } else if(op == "/") {
+    } else if(op === "/") {
         a /= b;
-    } else if(op == "=") {
+    } else if(op === "=") {
         a = b;
     }
 

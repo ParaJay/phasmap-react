@@ -68,11 +68,11 @@ function isDeclaration(line) {
 }
 
 function isSetInfo(line) {
-    return line.match(/setInfo \"[a-zA-Z ]*\" [a-zA-Z]*/g);
+    return line.match(/setInfo "[a-zA-Z ]*" [a-zA-Z]*/g);
 }
 
 function isSetMult(line) {
-    return line.match(/setMult [a-zA-Z] [\"[a-zA-Z ]*\"]*/g);
+    return line.match(/setMult [a-zA-Z] ["[a-zA-Z ]*"]*/g);
 }
 
 function parse(el, dir) {
@@ -87,9 +87,9 @@ function parse(el, dir) {
             let line = olines[i];
             
             if(isDeclaration(line)) {
-                let split = line.split(" = \(");
+                let split = line.split(" = (");
                 let pre = split[0].split("@dec ")[1];
-                let value = split[1].replace("\)", "").split(", ");
+                let value = split[1].replace(")", "").split(", ");
 
                 if(value.length > 1) {
                     for(let j = 0; j < value.length; j++) {
