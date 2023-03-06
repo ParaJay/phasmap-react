@@ -56,7 +56,7 @@ export function setInfo(i) { info = i; }
 export function readInfo(filename, dir) {
     filename = filename.toLowerCase().replaceAll(" ", "");
 
-    return new Promise((resolve) => { fetch(require(`../res/${dir}/${filename}.txt`)).then((r)=>{r.text().then(d => {resolve(d); })}); });   
+    return new Promise((resolve) => { fetch(require(`../../res/${dir}/${filename}.txt`)).then((r)=>{r.text().then(d => {resolve(d); })}); });   
 }
 
 function getFromKey(key) {

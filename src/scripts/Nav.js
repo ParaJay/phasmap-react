@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {unsafe_maps} from "./scripts/consts";
+import {unsafe_maps} from "./utils/consts";
 
 const maps = unsafe_maps;
 

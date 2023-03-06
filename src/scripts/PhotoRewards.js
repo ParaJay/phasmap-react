@@ -1,5 +1,5 @@
 import React from "react";
-import { info, InfoHeader, photoRewards } from "./consts";
+import { info, InfoHeader, photoRewards } from "./utils/consts";
 
 export default class PhotoRewards extends React.Component {
     constructor(props) {

@@ -32,4 +32,25 @@ export default class Random {
     fromArray(array) {
         return array[this.intFromArray(array)];
     }
+
+    randchance(array, chances) {
+        let size = 0;
+    
+        for(let i = 0; i < array.length; i++) {   
+            size += chances[i];
+        }
+    
+        let random = new Random().nextInt(size);
+        let probability = 0;
+    
+        for(let i = 0; i < array.length; i++) {   
+            probability += chances[i];
+    
+            if(random <= probability) {
+                return array[i];
+            }
+        }
+        
+        return array[0].randomize();
+    }
 }

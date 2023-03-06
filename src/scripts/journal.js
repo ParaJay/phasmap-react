@@ -1,8 +1,6 @@
 import React from "react";
-import { Tooltip } from "react-tooltip";
-import { stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils.js";
-import { ghosts, evidenceMap, info } from "./consts.js";
-import { PhasLabel } from "./consts.js";
+import { stripURL, handleKeyDown, initKeyValues, initKeys, capitalize, br } from "./utils/utils.js";
+import { ghosts, evidenceMap, info, PhasLabel } from "./utils/consts.js";
 
 const actions = {"goto":goto, "strike":strike, "reset":reset};
 

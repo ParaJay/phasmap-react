@@ -2,7 +2,7 @@ import Nav from './Nav';
 import Main from './Main';
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
-import { initInfo, isLoading } from './scripts/consts';
+import { initInfo, isLoading } from './utils/consts';
 
 class App extends React.Component {
     state = {loaded: false};

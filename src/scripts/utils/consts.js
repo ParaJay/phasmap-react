@@ -82,15 +82,11 @@ function parse(el, dir) {
         let lines = e.replaceAll("\r", "\n").replaceAll("\n\n", "\n").split("\n");
         let olines = lines.slice();
         let decs = {};
-        console.log(lines.length);
 
         for(let i = 0; i < olines.length; i++) {
             let line = olines[i];
-
-            console.log(i + ": " + line);
             
             if(isDeclaration(line)) {
-                console.log("isdec: " + line);
                 let split = line.split(" = \(");
                 let pre = split[0].split("@dec ")[1];
                 let value = split[1].replace("\)", "").split(", ");
@@ -122,12 +118,8 @@ function parse(el, dir) {
                 decs[pre] = value;
 
                 lines.splice(lines.indexOf(line), 1);
-            }else {
-                console.log("notdec: " + line);
             }
         }
-
-        console.log(lines);
 
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
@@ -141,41 +133,26 @@ function parse(el, dir) {
                 let key = split[1].trim();
                 let value = split[2].trim();
 
-                console.log(key + "|" + value);
 
-                console.log(decs);
-
-                if(decs[value]) {
-                    value = decs[value];
-                }
+                if(decs[value]) value = decs[value];
 
                 info[key] = value;
-                // console.log("set: " + key + ": to: " + value);
             }
 
             if(isSetMult(line)) {
-                // console.log("isSetMult");
                 line = line.replace("setMult ", "");
 
                 let split = line.split("\"");
 
                 let key;
                 let def = split[0].trim();
-                // console.log("key: " + key);
-                // console.log("split");
-                // console.log(split);
 
                 for(let j = 1; j < split.length; j++) {
-                    // console.log("i: " + i + ": " + split[j]);
                     key = split[j].trim();
-
-                    // console.log("val: " + value);
 
                     if(!key) continue;
     
-                    if(decs[def]) {
-                        def = decs[def];
-                    }
+                    if(decs[def]) def = decs[def];
     
                     let values = key.split("\" ");
         
@@ -189,11 +166,6 @@ function parse(el, dir) {
                             info[key] = def;
                         }
                     }
-
-                    // console.log("value: " + def);
-    
-                    // info[key] = def;
-                    // console.log("set: " + key + ": to: " + def);
                 }              
             }
         }

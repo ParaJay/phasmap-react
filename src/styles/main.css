@@ -68,6 +68,21 @@ button, label {
     /* margin: 3px 16; */
 }
 
+.photo-rando-item2 {
+    /* height: 100vh; */
+    /* width: 100vw; */
+    width: 30px;
+    text-align: center;
+}
+
+.photo-rando-item2 {
+    height: 4.3vh;
+    padding: 5px 4px;
+    margin: 6px 6px;
+    text-align: center;
+    border-radius: 12%;
+}
+
 input {
     margin: 8.75px 6px;
 }
@@ -86,7 +101,7 @@ button, box {
     align-items: center;
  }
 
-.dropdown-content {
+.dropdown-content, .photo-rando-dropdown-content {
     display: none;
     position: absolute;
     min-width: 30px;
@@ -94,11 +109,11 @@ button, box {
     background-color: rgb(78, 80, 82);
 }
 
-.dropdown-content a { padding: 5px 4px; }
+.dropdown-content a, .photo-rando-dropdown-content a { padding: 5px 4px; }
 
 .dropdown-content a:hover, .navbar button:hover {background-color: darkcyan;}
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content, .photo-rando-dropbtn:hover .photo-rando-dropdown-content {
    display: flex;
    flex-direction: column;
 }
@@ -196,4 +211,12 @@ button, box {
 .text-area {
     width: 100vh;
     height: 70vh;
+}
+
+.photo-rando-slider {
+    height: 2%;
+}
+
+.photo-rando-slider-b {
+    height: 3%;
 }

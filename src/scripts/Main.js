@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Ghosts from './scripts/ghosts';
-import Maps from './scripts/maps';
-import CursedItem from './scripts/cursed-items';
-import Equipment from './scripts/equipment';
-import Journal from './scripts/journal';
-import Difficulty from './scripts/difficulty';
-import PhotoRandomizer from './scripts/photo-randomizer';
-import PhotoRewards from './scripts/PhotoRewards';
+import Ghosts from './Ghosts';
+import Maps from './Maps';
+import CursedItem from './CursedItems';
+import Equipment from './Equipment';
+import Journal from './Journal';
+import Difficulty from './Difficulty';
+import PhotoRewards from './PhotoRewards';
+import PhotoRandomizer from './photorandomizer/PhotoRandomizer';
 
 const Main = () => {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './scripts/App';
 import reportWebVitals from './reportWebVitals';
 import 'react-tooltip/dist/react-tooltip.css';
 import "./styles/main.css";

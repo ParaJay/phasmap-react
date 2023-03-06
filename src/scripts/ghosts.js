@@ -1,6 +1,6 @@
 import React from "react";
-import {initWith} from "./info.js";
-import { ghosts } from "./consts.js";
+import {initWith} from "./Info.js";
+import { ghosts } from "./utils/consts.js";
 
 class Ghost extends React.Component {
     render() { return initWith(ghosts, "ghost"); }

@@ -1,7 +1,7 @@
-import { handleKeyDown, initParams, def, initKeys, initKeyValues, setSelected, getNext, selected, stripURL } from "./utils.js";
+import { handleKeyDown, initParams, def, initKeys, initKeyValues, setSelected, getNext, selected, stripURL } from "./utils/utils.js";
 import React from "react";
 import {TransformWrapper, TransformComponent} from "react-zoom-pan-pinch"
-import { maps } from "./consts.js";
+import { maps } from "./utils/consts.js";
 
 function init() {
     initKeyValues(1);

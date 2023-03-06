@@ -1,11 +1,9 @@
-import { initInfoState, setSelected, selected, handleKeyDown, stripURL } from "./utils.js";
-import * as Utils from "./utils.js";
+import { initInfoState, setSelected, selected, handleKeyDown, stripURL } from "./utils/utils.js";
+import * as Utils from "./utils/utils.js";
 import React from "react";
-import { info } from "./consts.js";
+import { info, InfoHeader } from "./utils/consts.js";
 import { Tooltip } from "react-tooltip";
-import { InfoHeader } from "./consts";
 
-// const info = {};
 var array, def;
 
 class InfoButton extends React.Component {

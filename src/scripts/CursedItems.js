@@ -1,6 +1,6 @@
-import { initWith } from "./info.js";
+import { initWith } from "./Info.js";
 import React from "react";
-import { cursedItems } from "./consts.js";
+import { cursedItems } from "./utils/consts.js";
 
 class CursedItem extends React.Component {
     render() { return initWith(cursedItems, "curseditem"); }
