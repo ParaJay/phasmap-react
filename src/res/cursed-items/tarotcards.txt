@@ -4,9 +4,9 @@ Green Wheel of Fortune: Increases sanity by 25% (20% Chance)
 
 The Devil: Forces manifestation (10% Chance)
 
-The Sun: Drops sanity to 0% (5% Chance)
+The Sun: Increases sanity to 100% (5% Chance)
 
-The Moon: null (5% Chance)
+The Moon: Lower sanity to 0% (5% Chance)
 
 The Tower: Forces interaction (20% Chance)
 
